@@ -13,3 +13,70 @@
  *= require_tree .
  *= require_self
  */
+
+body {
+  background-color: #ffffff;
+  margin: 0px;
+}
+
+.navigation {
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Avenir Next", "Avenir",
+    "Segoe UI", "Lucida Grande", sans-serif;
+}
+
+.navigation ul {
+  list-style: none;
+  background-color: #333333;
+  text-align: left;
+  padding: 0px;
+  margin: 0px;
+  border-bottom: 5px solid red;
+  border-bottom-color: #bb0000;
+}
+
+.navigation li {
+  width: 150px;
+  border-bottom: none;
+  text-align: center;
+  height: 50px;
+  line-height: 50px;
+  font-size: 1.4em;
+  display: inline-block;
+  margin-right: -4px;
+}
+
+.navigation a {
+  text-decoration: none;
+  color: #ffffff;
+  display: block;
+}
+
+.navigation a:hover {
+  background-color: #bb0000;
+}
+
+.navigation a.active {
+  cursor: default;
+}
+
+.content {
+
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #777777;
+  color: white;
+}
+
+#greet_user {
+  background-color: #bbbbbb;
+  font-size: 12px;
+  width: 250px;
+}
+
+

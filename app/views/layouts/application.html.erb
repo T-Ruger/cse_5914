@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Cse5914</title>
+    <title>Movie Recommender</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -10,16 +10,36 @@
   </head>
 
   <body>
-    <p class="navbar-text float-right">
-    <% if user_signed_in? %>
-      Logged in as <strong><%= current_user.email %></strong>.
-      <%= link_to 'Edit profile', edit_user_registration_path, :class => 'navbar-link' %> |
-      <%= link_to "Logout", destroy_user_session_path, method: :delete, :class => 'navbar-link'  %>
-    <% else %>
-      <%= link_to "Sign up", new_user_registration_path, :class => 'navbar-link'  %> |
-      <%= link_to "Login", new_user_session_path, :class => 'navbar-link'  %>
-    <% end %>
-    </p>
-    <%= yield %>
+    <header>
+      <div class = "navigation">
+        <ul>
+          <% if user_signed_in? %>
+            <li><%= link_to 'Home', root_path %></li>
+
+            <li><%= link_to 'Edit Profile', edit_user_registration_path %></li>
+
+            <li><%= link_to('Logout', destroy_user_session_path, method: :delete) %></li>
+
+            <li id = "greet_user">Welcome <%= current_user.email %></li>
+          <% else %>
+            <li><%= link_to "Sign up", new_user_registration_path %></li>
+
+            <li><%= link_to "Login", new_user_session_path %></li>
+          <% end %>
+        </ul>
+      </div>
+    </header>
+    
+    <div class = "content">
+      <%= yield %>
+    </div>
+
+    <div class = "footer">
+      <p>
+        This page is maintained by Team IBeMma. <br>
+        If there is a problem accessing this page, contact IBeMma.
+      </p>
+    </div>
+
   </body>
 </html>
