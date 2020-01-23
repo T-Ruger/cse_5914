@@ -36,6 +36,16 @@
       <%= yield %>
     </div>
 
+		<script src=https://assistant-web.watsonplatform.net/loadWatsonAssistantChat.js></script>
+		<script>
+			window.loadWatsonAssistantChat({
+				integrationID: "d984113e-a4c1-425f-b23d-bafebb3cab30", // The ID of this integration.
+				region: "au-syd" // The region your integration is hosted in.
+			}).then(function(instance){
+				instance.render();
+			});
+		</script>
+		
     <div class = "footer">
       <p>
         This page is maintained by Team IBeMma. <br>
