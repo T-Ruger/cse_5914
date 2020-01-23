@@ -15,6 +15,7 @@
         <ul>
           <% if user_signed_in? %>
             <li><%= link_to 'Home', root_path %></li>
+            <li><%= link_to 'Recently Watched', '/movies' %></li>
 
             <li><%= link_to 'Edit Profile', edit_user_registration_path %></li>
 
