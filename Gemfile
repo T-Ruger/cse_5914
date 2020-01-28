@@ -1,4 +1,4 @@
-#1/28 Caleb Fischer updated bootstrap version, added jquery-rails, simple_form
+#1/28 Caleb Fischer updated bootstrap version, added jquery-rails, simple_form, redis
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -20,6 +20,7 @@ gem 'devise'
 gem 'bootstrap', '~> 4.3.1'
 gem 'jquery-rails'
 gem 'simple_form'
+gem 'redis'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
