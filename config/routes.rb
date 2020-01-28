@@ -6,11 +6,11 @@ Rails.application.routes.draw do
   	get '/users/sign_out', to: 'devise/sessions#destroy'
   end
   
-  #root controller: :rooms, action: :index
+  root controller: :rooms, action: :index
   resources :room_messages
   resources :rooms
   
-  root to: "static_page#home"
+  #root to: "static_page#home"
   get '/movies', to: "static_page#movies"
   get '/about', to: "static_page#about"
 end
