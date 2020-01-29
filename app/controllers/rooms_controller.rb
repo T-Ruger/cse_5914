@@ -1,3 +1,8 @@
+require "json"
+require "ibm_watson/authenticators"
+require "ibm_watson/assistant_v2"
+include IBMWatson
+
 class RoomsController < ApplicationController
   # Loads:
   # @rooms = all rooms
@@ -13,8 +18,29 @@ class RoomsController < ApplicationController
   end
 
   def create
+  	#watson session setup
     @room = Room.new permitted_parameters
-
+		@room.apikey = "tR-_ntZkOUpqFIKbGjJae69dqCWOOQ8wKCQaCuaDASiA"
+		@room.assistantid = "b6d443ee-862a-4377-9f66-959b144757d2"
+		@room.serviceurl = "https://api.us-south.assistant.watson.cloud.ibm.com/instances/f965de9f-b2e3-4673-90ca-598d335efba8"
+				
+		authenticator = Authenticators::IamAuthenticator.new(
+  		apikey: @room.apikey
+		)
+		
+		assistant = AssistantV2.new(
+  		version: "2019-02-28",
+  		authenticator: authenticator
+		)
+		
+		assistant.service_url = @room.serviceurl
+		
+		response = assistant.create_session(
+  		assistant_id: @room.assistantid
+		)
+		
+		@room.sessionid = response.result["session_id"]
+		
     if @room.save
       flash[:success] = "Room #{@room.name} was created successfully"
       redirect_to rooms_path

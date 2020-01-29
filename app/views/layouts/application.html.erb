@@ -1,61 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Movie Recommender</title>
+    <title>RailsChatTutorial</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag 'application', media: 'all'%>
-    <%= javascript_pack_tag 'application'%>
+    <%= stylesheet_link_tag    'application', media: 'all' %>
+    <%= javascript_include_tag 'application' %>
   </head>
 
   <body>
-    <header>
-      <div class = "navigation">
-        <ul>
-          <li><%= link_to 'Home', root_path %></li>
-          <li><%= link_to 'About', '/about' %></li>
-          <% if user_signed_in? %>
-            <li><%= link_to 'Recently Watched', '/movies' %></li>
-
-            <li><%= link_to 'Edit Profile', edit_user_registration_path %></li>
-
-            <li><%= link_to('Logout', destroy_user_session_path) %></li>
-
-            <li id = "greet_user">Welcome <%= current_user.email %></li>
-          <% else %>
-            <li><%= link_to "Sign up", new_user_registration_path %></li>
-
-            <li><%= link_to "Login", new_user_session_path %></li>
-          <% end %>
-        </ul>
-      </div>
-    </header>
-    
-    <div class = "container">
-    	<div class="row">
-    		<div class="col-12">
-      		<%= yield %>
-      	</div>
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <%= render partial: 'shared/navigation_bar' %>
+          <div class="my-3">
+            <%= yield %>
+          </div>
+        </div>
       </div>
     </div>
-
-		<script src=https://assistant-web.watsonplatform.net/loadWatsonAssistantChat.js></script>
-		<script>
-			window.loadWatsonAssistantChat({
-				integrationID: "d984113e-a4c1-425f-b23d-bafebb3cab30", // The ID of this integration.
-				region: "au-syd" // The region your integration is hosted in.
-			}).then(function(instance){
-				instance.render();
-			});
-		</script>
-		
-    <div class = "footer">
-      <p>
-        This page is maintained by Team IBeMma. <br>
-        If there is a problem accessing this page, contact IBeMma.
-      </p>
-    </div>
-
   </body>
 </html>
