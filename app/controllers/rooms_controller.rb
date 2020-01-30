@@ -43,7 +43,7 @@ class RoomsController < ApplicationController
 		
     if @room.save
       flash[:success] = "Room #{@room.name} was created successfully"
-      redirect_to rooms_path
+      redirect_to(@room)
     else
       render :new
     end
@@ -60,7 +60,7 @@ class RoomsController < ApplicationController
   def update
     if @room.update_attributes(permitted_parameters)
       flash[:success] = "Room #{@room.name} was updated successfully"
-      redirect_to rooms_path
+      redirect_to action:"show"
     else
       render :new
     end
@@ -74,6 +74,6 @@ class RoomsController < ApplicationController
   end
 
   def permitted_parameters
-    params.require(:room).permit(:name)
+    #params.require(:room).permit(:name)
   end
 end

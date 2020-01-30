@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
  # devise_for :users
 
-  root controller: :rooms, action: :index
+  #root controller: :rooms, action: :index
 
   resources :room_messages
   resources :rooms
@@ -10,8 +10,9 @@ Rails.application.routes.draw do
   	get '/users/sign_out', to: 'devise/sessions#destroy'
   end
   
-  #root to: "static_page#home"
+  root to: "static_page#home"
   
+  get '/home', to: "static_page#home"
   get '/movies', to: "static_page#movies"
   get '/about', to: "static_page#about"
   get '/catalog', to: "static_page#movies"

@@ -2,8 +2,9 @@
 	<h1>Welcome to Movie on Rails!</h1>
 	<p>Welome to our Visual Media Recommender! Chat with us to find movies you may be interested in.</p>
 </div>
+
 <div class = "text-center">
-	<button><%= link_to "Chat with Us!", "http://localhost:3001/", target: :_blank %></button>
+	<button onclick="location.href='http://localhost:3000/rooms/new'" type="button">Chat with us!</button>
   <%= form_with(url: "/search", method: "get") do %>
     <%= label_tag(:q, "Search for:") %>
     <%= text_field_tag(:search) %>
