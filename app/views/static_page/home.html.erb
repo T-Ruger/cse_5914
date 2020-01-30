@@ -4,4 +4,9 @@
 </div>
 <div class = "text-center">
 	<button><%= link_to "Chat with Us!", "http://localhost:3001/", target: :_blank %></button>
+  <%= form_with(url: "/search", method: "get") do %>
+    <%= label_tag(:q, "Search for:") %>
+    <%= text_field_tag(:search) %>
+    <%= submit_tag("Search") %>
+  <% end %>
 </div>
