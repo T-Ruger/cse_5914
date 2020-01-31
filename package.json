@@ -1,5 +1,7 @@
 {
   "name": "rails-chat-tutorial",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "underscore": "^1.9.2"
+  }
 }
