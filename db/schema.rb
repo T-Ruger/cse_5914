@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_29_145544) do
+ActiveRecord::Schema.define(version: 2020_02_04_202538) do
 
   create_table "room_messages", force: :cascade do |t|
     t.integer "room_id"
@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2020_01_29_145544) do
     t.text "message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "watsonmsg"
     t.index ["room_id"], name: "index_room_messages_on_room_id"
     t.index ["user_id"], name: "index_room_messages_on_user_id"
   end

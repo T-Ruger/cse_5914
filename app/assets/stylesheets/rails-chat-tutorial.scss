@@ -35,6 +35,14 @@
       background: lighten($primary, 10%);
       color: $white;
     }
+    
+    .watson-message-content {
+      padding: 5px;
+      border: 1px solid $white;
+      border-radius: 5px;
+      background: lighten($white, 10%);
+      color: $black;
+    }
 
     & + .chat-message-container {
       margin-top: 10px;

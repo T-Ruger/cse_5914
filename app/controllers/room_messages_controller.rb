@@ -9,6 +9,7 @@ class RoomMessagesController < ApplicationController
   def create
     @room_message = RoomMessage.create user: current_user,
                                        room: @room,
+                                       watsonmsg: false,
                                        message: params.dig(:room_message, :message)
 
    RoomChannel.broadcast_to @room, @room_message
@@ -47,6 +48,7 @@ class RoomMessagesController < ApplicationController
   	puts JSON.pretty_generate(response.result)
 		@watson_message = RoomMessage.create user: current_user,
 	 																						room: @room,
+	 																						watsonmsg: true,
 	 																						message: response.result["output"]["generic"][0]["text"]
 	 	RoomChannel.broadcast_to @room, @watson_message
   end
