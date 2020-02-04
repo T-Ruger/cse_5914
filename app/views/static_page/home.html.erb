@@ -21,7 +21,11 @@
 		request.onload = function() {
 		  	// Begin accessing JSON data here
 			var data = JSON.parse(this.response)
-			console.log(data);
+			results = data["results"]
+			results.forEach(movie => {
+			   console.log(movie.original_title)
+			})
+
 		}
 
 		// Send request
