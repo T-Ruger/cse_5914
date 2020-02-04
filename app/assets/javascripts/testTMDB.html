@@ -40,7 +40,7 @@
 
 			similar(movie_id) {
 				var request = new XMLHttpRequest()
-				var urlStr = 'https://api.themoviedb.org/3/movie/' + movie_id + '//similar?api_key=305ae312343163e9a891637b00d624c9&language=en-US&page=1'
+				var urlStr = 'https://api.themoviedb.org/3/movie/' + movie_id + '/similar?api_key=305ae312343163e9a891637b00d624c9&language=en-US&page=1'
 				request.open('GET', urlStr, true)
 				return request;
 			}
