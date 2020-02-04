@@ -1,4 +1,21 @@
 // Create a request variable and assign a new XMLHttpRequest object to it.
+class TMDB {
+	constructor() {
+		this.find = function(movie) {
+			var request = new XMLHttpRequest()
+			var urlStr = 'https://api.themoviedb.org/3/search/movie?api_key=305ae312343163e9a891637b00d624c9&language=en-US&query=' + encodeURI(movie) + '&page=1&include_adult=false'
+			request.open('GET', urlStr, true)
+			return request;
+		}
+		this.person = function(person) {
+			var request = new XMLHttpRequest()
+			var urlStr = 'https://api.themoviedb.org/3/search/person?api_key=305ae312343163e9a891637b00d624c9&language=en-US&query=' + encodeURI(person) + '&page=1&include_adult=false'
+			request.open('GET', urlStr, true)
+			return request;
+		}
+	}
+}
+
 var genre = new Map()
 genre.set("Action", 28)
 genre.set("Adventure", 12)

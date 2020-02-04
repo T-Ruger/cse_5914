@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	<meta charset="utf-8"/>
+</head>
+	<body>
+		<div>
+		  Search <input type="text" id="search"><br>
+		  <button id="submit" value="Submit">
+		</div>
+
+	<script>
+		class TMDB {
+			find(movie) {
+				console.log("hello")
+				var request = new XMLHttpRequest()
+				var urlStr = 'https://api.themoviedb.org/3/search/movie?api_key=305ae312343163e9a891637b00d624c9&language=en-US&query=' + encodeURI(movie) + '&page=1&include_adult=false'
+				request.open('GET', urlStr, true)
+				return request
+			}
+			cast(person) {
+				var request = new XMLHttpRequest()
+				var urlStr = 'https://api.themoviedb.org/3/search/person?api_key=305ae312343163e9a891637b00d624c9&language=en-US&query=' + encodeURI(person) + '&page=1&include_adult=false'
+				request.open('GET', urlStr, true)
+				return request
+			}
+
+			popular() {
+				var request = new XMLHttpRequest()
+				var urlStr = 'https://api.themoviedb.org/3/movie/popular?api_key=305ae312343163e9a891637b00d624c9&language=en-US&page=1'
+				request.open('GET', urlStr, true)
+				return request;
+			}
+			top_rated() {
+				var request = new XMLHttpRequest()
+				var urlStr = 'https://api.themoviedb.org/3/movie/top_rated?api_key=305ae312343163e9a891637b00d624c9&language=en-US&page=1'
+				request.open('GET', urlStr, true)
+				return request;
+			}
+
+			similar(movie_id) {
+				var request = new XMLHttpRequest()
+				var urlStr = 'https://api.themoviedb.org/3/movie/' + movie_id + '//similar?api_key=305ae312343163e9a891637b00d624c9&language=en-US&page=1'
+				request.open('GET', urlStr, true)
+				return request;
+			}
+
+		}
+		function search() {
+			var database = new TMDB()
+			var request = database.cast(document.getElementById("search").value)
+			request.onload = function() {
+				console.log(JSON.parse(request.response).results)
+			}
+			request.send()
+
+		}
+		document.getElementById("submit").addEventListener("click", search)
+
+	</script>
+	</body>
+</html>

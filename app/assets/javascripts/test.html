@@ -13,26 +13,65 @@
 	</div>
 	<script>
 		// Create a request variable and assign a new XMLHttpRequest object to it.
-var genre = new Map()
-genre.set("Action", 28)
-genre.set("Adventure", 12)
-genre.set("Animation", 16)
-genre.set("Comedy", 35)
-genre.set("Crime", 35)
-genre.set("Documentary", 99)
-genre.set("Drama", 18)
-genre.set("Family", 10751)
-genre.set("Fantasy", 14)
-genre.set("History", 36)
-genre.set("Horror", 27)
-genre.set("Music", 10402)
-genre.set("Mystery", 9648)
-genre.set("Romance", 10749)
-genre.set("Science Fiction", 878)
-genre.set("TV Movie", 10770)
-genre.set("Thriller", 53)
-genre.set("War", 10752)
-genre.set("Western", 37)
+		class Tmdb {
+			constructor() {
+				this.top = new XMLHttpRequest() // Returns list of top movies.
+
+				// Returns top movies matching the title of the movie.
+				this.find = function(search) {
+					var request = new XMLHttpRequest()
+					request.open('GET', 'https://api.themoviedb.org/3/search/movie?api_key=305ae312343163e9a891637b00d624c9&language=en-US&query=' + search + '&page=1&include_adult=false')
+					return request
+				}
+				this.top.open('GET', 'https://api.themoviedb.org/3/movie/top_rated?api_key=305ae312343163e9a891637b00d624c9&language=en-US&page=1&include_adult=false', true)
+
+				/* 
+				* Returns top movies by genre when passed an applicable
+				* Map of genre type to genre number and a list of genres to
+				* search.
+				*/
+				this.genre = function(genreMap, genreSearch) {
+					var genreNum = genreSearch.map(val => genreMap[val])
+					var request = new XMLHttpRequest()
+					request.open('GET', 'https://api.themoviedb.org/3/discover/movie?api_key=<<api_key>>&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genre=' + genreNum.join(','))
+					return request
+
+				}
+
+			}
+		}
+
+		// Find actor by their ID in TMDB's database
+		function findActorID(actor) {
+			var request = new XMLHttpRequest()
+			request.open('GET', 'https://api.themoviedb.org/3/search/movie?api_key=305ae312343163e9a891637b00d624c9&language=en-US&query=Avengers%3A%20Endgame&page=1&include_adult=false', true)
+		}
+
+		// Generate a map of all appropriate genres.
+		function genreMap() {
+			var genre = new Map()
+			genre.set("Action", 28)
+			genre.set("Adventure", 12)
+			genre.set("Animation", 16)
+			genre.set("Comedy", 35)
+			genre.set("Crime", 35)
+			genre.set("Documentary", 99)
+			genre.set("Drama", 18)
+			genre.set("Family", 10751)
+			genre.set("Fantasy", 14)
+			genre.set("History", 36)
+			genre.set("Horror", 27)
+			genre.set("Music", 10402)
+			genre.set("Mystery", 9648)
+			genre.set("Romance", 10749)
+			genre.set("Science Fiction", 878)
+			genre.set("TV Movie", 10770)
+			genre.set("Thriller", 53)
+			genre.set("War", 10752)
+			genre.set("Western", 37)
+		}
+		var genre = genreMap()
+
 var movie = document.getElementById('Movie')
 movie.onclick = function() {
 	var request = new XMLHttpRequest()
