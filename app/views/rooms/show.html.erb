@@ -1,8 +1,21 @@
 <h1>
   <%= @room.name %>
 </h1>
-
-<div class="row h-100">
+<style>
+	.row {
+    height: 90%;
+    overflow-y: hidden; /* don't show content that exceeds my height */
+	}
+	.my-3 {
+    height: 100%;
+    overflow-y: hidden; /* don't show content that exceeds my height */
+	}
+	.chat {
+    height: 90%;
+    overflow-y: hidden; /* don't show content that exceeds my height */
+	}
+</style>
+<div class = "row">
 	<div class = "col">
 		<p> results go here </p>
 	</div>
@@ -63,7 +76,6 @@
     <% end %>
   </div>
 </div>
-
 <div class="d-none" data-role="message-template">
   <div class="chat-message-container">
     <div class="row no-gutters">
