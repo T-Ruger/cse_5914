@@ -23,6 +23,7 @@ class RoomsController < ApplicationController
 		@room.apikey = "tR-_ntZkOUpqFIKbGjJae69dqCWOOQ8wKCQaCuaDASiA"
 		@room.assistantid = "b6d443ee-862a-4377-9f66-959b144757d2"
 		@room.serviceurl = "https://api.us-south.assistant.watson.cloud.ibm.com/instances/f965de9f-b2e3-4673-90ca-598d335efba8"
+		@welcome_message_text = "Welcome to Movie On Rails! How can I help you?"
 				
 		authenticator = Authenticators::IamAuthenticator.new(
   		apikey: @room.apikey
@@ -40,6 +41,13 @@ class RoomsController < ApplicationController
 		)
 		
 		@room.sessionid = response.result["session_id"]
+		
+		#send welcome message when room is created
+		@welcome_message = RoomMessage.create user: current_user,
+	 																						room: @room,
+	 																						watsonmsg: true,
+	 																						message: @welcome_message_text
+	 	RoomChannel.broadcast_to @room, @welcome_message
 		
     if @room.save
       flash[:success] = "Room #{@room.name} was created successfully"

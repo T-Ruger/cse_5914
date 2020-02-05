@@ -46,10 +46,12 @@ class RoomMessagesController < ApplicationController
   
   def interpret_response(response)
   	puts JSON.pretty_generate(response.result)
+  	response_text = response.result["output"]["generic"][0]["text"]
+  	
 		@watson_message = RoomMessage.create user: current_user,
 	 																						room: @room,
 	 																						watsonmsg: true,
-	 																						message: response.result["output"]["generic"][0]["text"]
+	 																						message: response_text
 	 	RoomChannel.broadcast_to @room, @watson_message
   end
 end

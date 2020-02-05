@@ -2,35 +2,46 @@
   <%= @room.name %>
 </h1>
 
-<div class="row">
-  <div class="col-12 col-md-3">
-    <%= render partial: 'rooms' %>
-  </div>
-
+<div class="row h-100">
+	<div class = "col">
+		<p> results go here </p>
+	</div>
   <div class="col">
     <div class="chat" data-channel-subscribe="room" data-room-id="<%= @room.id %>">
       <% @room_messages.each do |room_message| %>
-        <div class="chat-message-container">
-          <div class="row no-gutters">
-            <div class="col-auto text-center">
-              <img src="<%= room_message.user.gravatar_url %>" class="avatar" alt="">
-            </div>
-
-            <div class="col">
-              <div class="message-content">
-                <p class="mb-1">
-                  <%= room_message.message %>
-                </p>
-
-                <div class="text-right">
-                  <small>
-                    <%= room_message.created_at %>
-                  </small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      	<% if !room_message.watsonmsg %>
+		      <div class="chat-message-container">
+		        <div class="row no-gutters">
+		          <div class="col">
+		            <div class="message-content">
+		              <p class="text-left" data-role="message-text">
+		                <%= room_message.message %>
+		              </p>
+		            </div>
+		          </div>  
+		          <div class="col-auto text-center">
+		        	  <img src="<%= room_message.user.gravatar_url %>" class="avatar" alt="">
+		        	</div>
+		        </div>
+		      </div>
+        <% else %>
+        	<div class="chat-message-container">
+		        <div class="row no-gutters">
+		        
+		        	<div class="col-auto text-center">
+		        	  <img src="<%= room_message.user.gravatar_url %>" class="avatar" alt="">
+		        	</div>
+		        	
+		          <div class="col">
+		            <div class="watson-message-content">
+		              <p class="text-left" data-role="message-text">
+		                <%= room_message.message %>
+		              </p>
+		            </div>
+		          </div>  
+		        </div>
+		      </div>
+        <% end %>
       <% end %>
     </div>
 
@@ -99,3 +110,4 @@
     </div>
   </div>
 </div>
+
