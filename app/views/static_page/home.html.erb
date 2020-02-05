@@ -8,6 +8,29 @@
   <%= form_with(url: "/search", method: "get") do %>
     <%= label_tag(:q, "Search for:") %>
     <%= text_field_tag(:search) %>
-    <%= submit_tag("Search") %>
+    <button onclick="getMovie()" type="button">Search</button>
+
+    <script>
+	function getMovie(){
+		var movie =  document.getElementById("search").value
+		var url = "https://api.themoviedb.org/3/search/movie?api_key=305ae312343163e9a891637b00d624c9&language=en-US&query=" + movie + "&page=1&include_adult=false"
+		var request = new XMLHttpRequest()
+		// Open a new connection, using the GET request on the URL endpoint
+		request.open('GET', url , true)
+
+		request.onload = function() {
+		  	// Begin accessing JSON data here
+			var data = JSON.parse(this.response)
+			results = data["results"]
+			results.forEach(movie => {
+			   console.log(movie.original_title)
+			})
+
+		}
+
+		// Send request
+		request.send()	
+	}
+    </script>
   <% end %>
 </div>
