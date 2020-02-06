@@ -12,17 +12,7 @@
     <%= label_tag(:q, "Search for:") %>
     <%= text_field_tag(:search) %>
     <button id ="searchBttn" type="button">Search</button>
-    <table class="table table-striped table-bordered">
-    	<thead class="thead-dark">
-	    	<tr>
-	    		<th style = "width: 25%">Title</th>
-	    		<th style = "width: 25%">Poster</th>
-	    		<th style = "width: 50%">Description</th>
-	    	</tr>
-    	</thead>
-    	<tbody id = "results">
-    	</tbody>
-	</table>
+    <table id = "movies" class="table table-striped table-bordered"></table>
 	<script>
 		var api_key = "305ae312343163e9a891637b00d624c9"
 		var BASE_PATH = "https://api.themoviedb.org/3"
@@ -30,7 +20,7 @@
     	class TMDB {
 			find(movie) {
 				var request = new XMLHttpRequest()
-				var urlStr = BASE_PATH + '/search/movie?api_key=' + api_key + 'c9&language=en-US&query=' + encodeURI(movie) + '&page=1&include_adult=false'
+				var urlStr = BASE_PATH + '/search/movie?api_key=' + api_key + '&language=en-US&query=' + encodeURI(movie) + '&page=1&include_adult=false'
 				request.open('GET', urlStr, true)
 				return request
 			}
@@ -69,21 +59,40 @@
 
 		}
 		var database = new TMDB();
-		/*function deleteChild(node) {
+		function deleteChild(node) {
 			while (node.firstChild) {
+				console.log(node)
+				console.log(node.firstChild)
 				node.remove(node.firstChild)
 			}
-		}*/
-		/*function createTableHead(table) {
+		}
+		function createTableHead(table) {
+			var header = document.createElement("thead")
+			header.className = "thead-dark"
+			var row = document.createElement("tr")
+			header.appendChild(row)
 			var title = document.createElement("th")
+			var description = document.createElement("th")
+			var poster = document.createElement("th")
 			title.appendChild(document.createTextNode("Title"))
-		}*/
+			poster.appendChild(document.createTextNode("Poster"))
+			description.appendChild(document.createTextNode("Description"))
+			title.setAttribute("style", "width: 25%")
+			description.setAttribute("style", "width: 25%")
+			poster.setAttribute("style", "width: 50%")
+			row.appendChild(title)
+			row.appendChild(poster)
+			row.appendChild(description)
+			table.appendChild(header)
+		}
 
 		/*
 		* Retrieves the first page of results delievered by TMDB's
 		* movie database.
 		*/
 		function getMovie(){
+			deleteChild(document.getElementById("movies"))
+			createTableHead(document.getElementById("movies"))
 			// Movie being searched for
 			var movie =  document.getElementById("search").value
 			// HTTP request to find movies fitting that title using 
@@ -92,6 +101,9 @@
 
 			// Output results returned by API call.
 			request.onload = function() {
+				var body = document.createElement("tbody")
+				body.id = "results"
+				document.getElementById("movies").appendChild(body)
 			  	// Begin accessing JSON data here
 				var data = JSON.parse(this.response)
 				var results = data["results"]
