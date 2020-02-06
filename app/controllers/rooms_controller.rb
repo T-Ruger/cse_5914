@@ -86,6 +86,7 @@ class RoomsController < ApplicationController
   		assistant_id: @room.assistantid
 		)
 		
+		puts JSON.pretty_generate(response.result)
 		return response.result["session_id"]
   end
 end
