@@ -33,15 +33,49 @@ class RoomMessagesController < ApplicationController
   		authenticator: authenticator
 		)
 		
-		response = assistant.message(
-			assistant_id: @room.assistantid,
-			session_id: @room.sessionid,
-			input: {
-				text: @room_message.message
-			}
-		)
+		error = false
+		begin
+			response = assistant.message(
+				assistant_id: @room.assistantid,
+				session_id: @room.sessionid,
+				input: {
+					text: @room_message.message
+				}
+			)
+			
+			#check if session is expired
+			rescue IBMWatson::ApiException => ex
+				error = true
+				@watson_message = RoomMessage.create user: current_user,
+	 																						room: @room,
+	 																						watsonmsg: true,
+	 																						message: "The session has expired. Starting a new chat."
+	 			RoomChannel.broadcast_to @room, @watson_message
+				
+				authenticator = Authenticators::IamAuthenticator.new(
+					apikey: @room.apikey
+				)
+				assistant = AssistantV2.new(
+					version: "2019-02-28",
+					authenticator: authenticator
+				)
+				assistant.service_url = @room.serviceurl	
+				response = assistant.create_session(
+					assistant_id: @room.assistantid
+				)
+				@room.sessionid = response.result["session_id"]
+				@room.save
+				
+				@welcome_message = RoomMessage.create user: current_user,
+	 																						room: @room,
+	 																						watsonmsg: true,
+	 																						message: "Welcome to Movie On Rails! How can I help you?"
+	 			RoomChannel.broadcast_to @room, @welcome_message
+		end
 		
-		interpret_response(response)
+		if(!error) then
+			interpret_response(response)
+		end
   end
   
   def interpret_response(response)

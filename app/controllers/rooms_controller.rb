@@ -24,23 +24,8 @@ class RoomsController < ApplicationController
 		@room.assistantid = "b6d443ee-862a-4377-9f66-959b144757d2"
 		@room.serviceurl = "https://api.us-south.assistant.watson.cloud.ibm.com/instances/f965de9f-b2e3-4673-90ca-598d335efba8"
 		@welcome_message_text = "Welcome to Movie On Rails! How can I help you?"
-				
-		authenticator = Authenticators::IamAuthenticator.new(
-  		apikey: @room.apikey
-		)
 		
-		assistant = AssistantV2.new(
-  		version: "2019-02-28",
-  		authenticator: authenticator
-		)
-		
-		assistant.service_url = @room.serviceurl
-		
-		response = assistant.create_session(
-  		assistant_id: @room.assistantid
-		)
-		
-		@room.sessionid = response.result["session_id"]
+		@room.sessionid = get_new_session_id
 		
 		#send welcome message when room is created
 		@welcome_message = RoomMessage.create user: current_user,
@@ -83,5 +68,24 @@ class RoomsController < ApplicationController
 
   def permitted_parameters
     #params.require(:room).permit(:name)
+  end
+  
+  def get_new_session_id
+  	authenticator = Authenticators::IamAuthenticator.new(
+  		apikey: @room.apikey
+		)
+		
+		assistant = AssistantV2.new(
+  		version: "2019-02-28",
+  		authenticator: authenticator
+		)
+		
+		assistant.service_url = @room.serviceurl
+		
+		response = assistant.create_session(
+  		assistant_id: @room.assistantid
+		)
+		
+		return response.result["session_id"]
   end
 end
