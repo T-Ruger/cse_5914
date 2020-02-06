@@ -57,8 +57,37 @@ class RoomMessagesController < ApplicationController
   def interpret_response(response)
   	puts JSON.pretty_generate(response.result)
   	
+  	#parse entities
+  	i = 0
+  	found_entities = Hash.new
+  	while i < response.result["output"]["entities"].size do
+  		entity = response.result["output"]["entities"][i]["entity"]
+  		value = response.result["output"]["entities"][i]["value"]
+  		confidence = response.result["output"]["entities"][i]["confidence"]
+  		
+  		#update room entity values
+  		if confidence.to_f > found_entities[entity].to_f then
+  			found_entities[entity] = confidence.to_f
+				puts found_entities[entity]
+				case entity
+					when "genre"
+						@room.genre = value
+					when "director"
+						@room.director = value
+					when "time_period"
+						@room.timeperiod = value
+					when "length"
+						@room.length = value
+				end
+				@room.save
+  		end
+  		i+=1
+  	end
+  	
+  	generate_hash
+  		
   	#parse response text, write text response to chat
-  	i = 0;
+  	i = 0
   	while i < response.result["output"]["generic"].size do
   		response_text = response.result["output"]["generic"][i]["text"]
   		
@@ -70,10 +99,66 @@ class RoomMessagesController < ApplicationController
 		 		RoomChannel.broadcast_to @room, @watson_message
 	 		end
 	 		i+=1
+  	end	
+  	
+  end
+  
+  #generate a hash of all current entities and their values
+  def generate_hash
+  	entity_hash = Hash.new
+  	
+  	if @room.genre != nil && @room.genre != "" then
+  		entity_hash["with_genres"] = @room.genre
   	end
   	
-  	#parse entities
+  	if @room.director != nil && @room.director != "" then
+  		entity_hash["director"] = @room.director
+  	end
   	
+  	if @room.length != nil && @room.length != "" then
+  		entity_hash["with_runtime.lte"] = @room.length
+  	end
+  	
+  	if @room.timeperiod != nil && @room.timeperiod != "" then
+  		case @room.timeperiod
+  			when "1900s"
+  				entity_hash["primary_release_date.gte"] = "1900-01-01"
+  				entity_hash["primary_release_date.lte"] = "1999-12-31"
+				when "2000s"
+  				entity_hash["primary_release_date.gte"] = "2000-01-01"
+				when "2010s"
+  				entity_hash["primary_release_date.gte"] = "2010-01-01"
+  				entity_hash["primary_release_date.lte"] = "2019-12-31"
+				when "2020s"
+  				entity_hash["primary_release_date.gte"] = "2020-01-01"
+  				entity_hash["primary_release_date.lte"] = "2029-12-31"
+				when "30s"
+  				entity_hash["primary_release_date.gte"] = "1930-01-01"
+  				entity_hash["primary_release_date.lte"] = "1939-12-31"
+				when "40s"
+  				entity_hash["primary_release_date.gte"] = "1940-01-01"
+  				entity_hash["primary_release_date.lte"] = "1949-12-31"
+				when "50s"
+  				entity_hash["primary_release_date.gte"] = "1950-01-01"
+  				entity_hash["primary_release_date.lte"] = "1959-12-31"
+				when "60s"
+  				entity_hash["primary_release_date.gte"] = "1960-01-01"
+  				entity_hash["primary_release_date.lte"] = "1969-12-31"
+				when "70s"
+  				entity_hash["primary_release_date.gte"] = "1970-01-01"
+  				entity_hash["primary_release_date.lte"] = "1979-12-31"
+				when "80s"
+  				entity_hash["primary_release_date.gte"] = "1980-01-01"
+  				entity_hash["primary_release_date.lte"] = "1989-12-31"
+				when "90s"
+  				entity_hash["primary_release_date.gte"] = "1990-01-01"
+  				entity_hash["primary_release_date.lte"] = "1999-12-31"
+  		end
+  		
+  	end
+  	
+  	puts entity_hash.to_s
+  	return entity_hash
   end
   
   #get new session id for room if session is expired
