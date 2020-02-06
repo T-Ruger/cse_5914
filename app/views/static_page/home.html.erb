@@ -59,15 +59,11 @@
 
 		}
 		var database = new TMDB();
-		function deleteChild(node) {
-			while (node.firstChild) {
-				console.log(node)
-				console.log(node.firstChild)
-				node.remove(node.firstChild)
-			}
-		}
+
+
 		function createTableHead(table) {
 			var header = document.createElement("thead")
+			header.id = "resultsHeader"
 			header.className = "thead-dark"
 			var row = document.createElement("tr")
 			header.appendChild(row)
@@ -86,12 +82,20 @@
 			table.appendChild(header)
 		}
 
+		function deleteTable(){
+			var tblHead = document.getElementById("resultsHeader");
+			if(tblHead) tblHead.parentNode.removeChild(tblHead);
+
+			var tbl = document.getElementById("results");
+			if(tbl) tbl.parentNode.removeChild(tbl);
+		}
+
 		/*
 		* Retrieves the first page of results delievered by TMDB's
 		* movie database.
 		*/
 		function getMovie(){
-			deleteChild(document.getElementById("movies"))
+			deleteTable()
 			createTableHead(document.getElementById("movies"))
 			// Movie being searched for
 			var movie =  document.getElementById("search").value
