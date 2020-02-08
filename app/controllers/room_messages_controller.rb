@@ -5,7 +5,8 @@ include IBMWatson
 
 class RoomMessagesController < ApplicationController
   before_action :load_entities
-
+	after_action :get_response, only: [:create]
+	
   def create
     @room_message = RoomMessage.create user: current_user,
                                        room: @room,
@@ -13,7 +14,7 @@ class RoomMessagesController < ApplicationController
                                        message: params.dig(:room_message, :message)
 
    RoomChannel.broadcast_to @room, @room_message
-	 get_response
+	 #get_response
   end
 
   protected
@@ -58,6 +59,7 @@ class RoomMessagesController < ApplicationController
   	puts JSON.pretty_generate(response.result)
   	
   	#parse entities
+  	intent = response.result["output"]["intents"][0]["intent"]
   	i = 0
   	found_entities = Hash.new
   	while i < response.result["output"]["entities"].size do
@@ -65,19 +67,28 @@ class RoomMessagesController < ApplicationController
   		value = response.result["output"]["entities"][i]["value"]
   		confidence = response.result["output"]["entities"][i]["confidence"]
   		
+  		
   		#update room entity values
   		if confidence.to_f > found_entities[entity].to_f then
   			found_entities[entity] = confidence.to_f
 				puts found_entities[entity]
 				case entity
 					when "genre"
-						@room.genre = value
+						if @room.genre == nil || @room.genre == "" || intent == "request_genre" then
+							@room.genre = value
+						end
 					when "director"
-						@room.director = value
+						if @room.director == nil || @room.director == "" || intent == "request_director" then
+							@room.director = value
+						end
 					when "time_period"
-						@room.timeperiod = value
+						if @room.timeperiod == nil || @room.timeperiod == "" || intent == "request_time_period" then
+							@room.timeperiod = value
+						end
 					when "length"
-						@room.length = value
+						if @room.length == nil || @room.length == "" || intent == "request_length" then
+							@room.length = value
+						end
 				end
 				@room.save
   		end
@@ -157,7 +168,7 @@ class RoomMessagesController < ApplicationController
   		
   	end
   	
-  	puts entity_hash.to_s
+  	puts "\n\n" + entity_hash.to_s + "\n\n"
   	return entity_hash
   end
   

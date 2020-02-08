@@ -7,9 +7,11 @@
   <div class="navbar-nav">
   	<a class="nav-item nav-link" href='/home'>Home</a>
   	<a class="nav-item nav-link" href='/about'>About</a>
-  	<a class="nav-item nav-link" href='/rooms/new'>Chat</a>
   	<a class="nav-item nav-link" href='/movies'>Movie Catalog</a>
   	<a class="nav-item nav-link" href='/movies'>Recently Watched</a>
+  	<%= form_for Room.new do |f| %>
+			<%= f.submit "Chat", :class => "nav-item"%>
+		<% end %>
   </div>
       
   <% if current_user %>
