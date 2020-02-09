@@ -16,7 +16,7 @@
 	<div class = "col">
 		<table id = "movies" class="table table-striped table-bordered"></table>
 	</div>
-  <div class="col">
+  <div class="col" style="max-width: 30vw;">
     <div class="chat" data-channel-subscribe="room" data-room-id="<%= @room.id %>">
       <% @room_messages.each do |room_message| %>
       	<% if !room_message.watsonmsg %>
@@ -29,9 +29,6 @@
 		              </p>
 		            </div>
 		          </div>  
-		          <div class="col-auto text-center">
-		        	  <img src="<%= room_message.user.gravatar_url %>" class="avatar" alt="">
-		        	</div>
 		        </div>
 		      </div>
         <% else %>
@@ -87,10 +84,6 @@
             </small>
           </div>
         </div>
-      </div>
-      
-      <div class="col-auto text-center">
-        <img src="" class="avatar" alt="" data-role="user-avatar">
       </div>
     </div>
   </div>

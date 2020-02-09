@@ -4,6 +4,8 @@
 </div>
 
 <div class = "text-center">
-	<button onclick="location.href='http://localhost:3000/rooms/new'" type="button">Chat with us!</button>
+	<%= simple_form_for Room.new do |f| %>
+		<%= f.submit "Start chatting", class: 'btn btn-success' %>
+	<% end %>
 </div>
 

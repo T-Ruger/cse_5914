@@ -18,8 +18,13 @@ class RoomsController < ApplicationController
   end
 
   def create
+  	#delete all previous rooms created by user
+  	Room.where(creator: current_user.username).delete_all
+  	
+  	@room = Room.new permitted_parameters
+  	@room.creator = current_user.username
+  	
   	#watson session setup
-    @room = Room.new permitted_parameters
 		@room.apikey = "tR-_ntZkOUpqFIKbGjJae69dqCWOOQ8wKCQaCuaDASiA"
 		@room.assistantid = "b6d443ee-862a-4377-9f66-959b144757d2"
 		@room.serviceurl = "https://api.us-south.assistant.watson.cloud.ibm.com/instances/f965de9f-b2e3-4673-90ca-598d335efba8"
@@ -63,7 +68,11 @@ class RoomsController < ApplicationController
 
   def load_entities
     @rooms = Room.all
-    @room = Room.find(params[:id]) if params[:id]
+    if params[:id] && Room.exists?(params[:id]) 
+   	 @room = Room.find(params[:id]) if params[:id]
+ 	  else
+ 	   @room = Room.find_by creator: current_user.username
+    end
   end
 
   def permitted_parameters
