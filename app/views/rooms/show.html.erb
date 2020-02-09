@@ -14,7 +14,7 @@
 </style>
 <div class = "row">
 	<div class = "col">
-		<p> results go here </p>
+		<table id = "movies" class="table table-striped table-bordered"></table>
 	</div>
   <div class="col">
     <div class="chat" data-channel-subscribe="room" data-room-id="<%= @room.id %>">
@@ -119,4 +119,215 @@
     </div>
   </div>
 </div>
+<script>
+  var api_key = "305ae312343163e9a891637b00d624c9"
+  var BASE_PATH = "https://api.themoviedb.org/3"
+  var POSTER_PATH =  "https://image.tmdb.org/t/p/w154"
+  var SORT_BY = "sort_by=popularity.desc"
+  var AMP = "&"
+  var INCLUDE_ADULT = "include_adult=false"
+  var PAGE_NUM = "page=1"
+  var LANGUAGE = "language=en-US"
+  var GENRES = new Map()
+  GENRES.set('action', 28)
+  GENRES.set('adventure', 12)
+  GENRES.set('animation', 16)
+  GENRES.set('comedy', 35)
+  GENRES.set('crime', 80)
+  GENRES.set('documentary', 99)
+  GENRES.set('drama', 18)
+  GENRES.set('family', 10751)
+  GENRES.set('fantasy', 14)
+  GENRES.set('history', 36)
+  GENRES.set('horror', 27)
+  GENRES.set('music', 10402)
+  GENRES.set('mystery', 9648)
+  GENRES.set('romance', 10749)
+  GENRES.set('science fiction', 878)
+  GENRES.set('tv movie', 10770)
+  GENRES.set('war', 10752)
+  GENRES.set('western', 37)
+  class TMDB {
+    find(movie) {
+      var request = new XMLHttpRequest()
+      var urlStr = BASE_PATH + '/search/movie?api_key=' + api_key + '&language=en-US&query=' + encodeURI(movie) + '&page=1&include_adult=false'
+      request.open('GET', urlStr, true)
+      return request
+    }
+    cast(person) {
+      var request = new XMLHttpRequest()
+      var urlStr = BASE_PATH + '/search/person?api_key=' + api_key +'&language=en-US&query=' + encodeURI(person) + '&page=1&include_adult=false'
+      request.open('GET', urlStr, true)
+      return request
+    }
+
+    popular() {
+      var request = new XMLHttpRequest()
+      var urlStr = BASE_PATH + '/popular?api_key=' + api_key +'&language=en-US&page=1'
+      request.open('GET', urlStr, true)
+      return request;
+    }
+    top_rated() {
+      var request = new XMLHttpRequest()
+      var urlStr = BASE_PATH + '/movie/top_rated?api_key=' + api_key + '&language=en-US&page=1'
+      request.open('GET', urlStr, true)
+      return request;
+    }
+
+    similar(movie_id) {
+      var request = new XMLHttpRequest()
+      var urlStr = BASE_PATH + '/movie/' + movie_id + '/similar?api_key=' + api_key + '&language=en-US&page=1'
+      request.open('GET', urlStr, true)
+      return request;
+    }
+    image(path) {
+      var request = new XMLHttpRequest()
+      var urlStr = POSTER_PATH + "w500/" + path
+      request.open('GET', urlStr, true)
+      return request
+    }
+
+    multiSearch(attributes) {
+      var request = new XMLHttpRequest()
+      var urlStr = BASE_PATH + "/discover/movie?api_key=" + api_key + AMP + LANGUAGE + AMP + SORT_BY + AMP + INCLUDE_ADULT + PAGE_NUM
+      for (let [key, value] of attributes) {
+        if (key == 'with_genres') {
+          value = GENRES.get(value.toLowerCase())
+        }
+        console.log(urlStr)
+        urlStr = urlStr + AMP + key + "=" + value
+      }
+      request.open('GET', urlStr, true)
+      return request
+    }
+
+  }
+  var database = new TMDB();
+  function updateList() {
+      var attributes = "<%= @attributes %>"
+      if (attributes.size != 0) {
+        deleteTable()
+        createTableHead(document.getElementById("movies"))
+        var request = database.multiSearch(attributes)
+        request.onload = function () {
+          var body = document.createElement("tbody")
+          body.id = "results"
+          document.getElementById("movies").appendChild(body)
+            // Begin accessing JSON data here
+          var data = JSON.parse(this.response)
+          var results = data["results"]
+          // Create a row for each movie.
+          results.forEach(movie => {
+            // Create row element for the movie
+            // and applicable fields for movie information.
+              var row = document.createElement("tr")
+              var title = document.createElement("td")
+              var image = document.createElement("td")
+              var description = document.createElement("td")
+              // Create text nodes for movie information.
+
+              // Movie Title
+              var titleResp = document.createTextNode(movie.original_title)
+              // Movie Description
+              var overview = document.createTextNode(movie.overview)
+              title.appendChild(titleResp)
+              description.appendChild(overview)
+              row.appendChild(title)
+              document.getElementById("results").appendChild(row)
+              var img = document.createElement("img");
+              img.src = POSTER_PATH + movie.poster_path
+              image.appendChild(img)
+              row.appendChild(img)
+              row.appendChild(description)
+
+        })
+        request.send()
+      }
+    }
+  }
+
+
+  function createTableHead(table) {
+    var header = document.createElement("thead")
+    header.id = "resultsHeader"
+    header.className = "thead-dark"
+    var row = document.createElement("tr")
+    header.appendChild(row)
+    var title = document.createElement("th")
+    var description = document.createElement("th")
+    var poster = document.createElement("th")
+    title.appendChild(document.createTextNode("Title"))
+    poster.appendChild(document.createTextNode("Poster"))
+    description.appendChild(document.createTextNode("Description"))
+    title.setAttribute("style", "width: 25%")
+    description.setAttribute("style", "width: 25%")
+    poster.setAttribute("style", "width: 50%")
+    row.appendChild(title)
+    row.appendChild(poster)
+    row.appendChild(description)
+    table.appendChild(header)
+  }
+
+  function deleteTable(){
+    var tblHead = document.getElementById("resultsHeader");
+    if(tblHead) tblHead.parentNode.removeChild(tblHead);
+
+    var tbl = document.getElementById("results");
+    if(tbl) tbl.parentNode.removeChild(tbl);
+  }
+
+
+  /*
+  * Retrieves the first page of results delievered by TMDB's
+  * movie database.
+  */
+  function getMovie(){
+    deleteTable()
+    createTableHead(document.getElementById("movies"))
+    // Movie being searched for
+    var movie =  document.getElementById("search").value
+    // HTTP request to find movies fitting that title using 
+    // TMDB's API.
+    var request = database.find(movie)
+
+    // Output results returned by API call.
+    request.onload = function() {
+      var body = document.createElement("tbody")
+      body.id = "results"
+      document.getElementById("movies").appendChild(body)
+        // Begin accessing JSON data here
+      var data = JSON.parse(this.response)
+      var results = data["results"]
+      // Create a row for each movie.
+      results.forEach(movie => {
+        // Create row element for the movie
+        // and applicable fields for movie information.
+          var row = document.createElement("tr")
+          var title = document.createElement("td")
+          var image = document.createElement("td")
+          var description = document.createElement("td")
+          // Create text nodes for movie information.
+
+          // Movie Title
+          var titleResp = document.createTextNode(movie.original_title)
+          // Movie Description
+          var overview = document.createTextNode(movie.overview)
+          title.appendChild(titleResp)
+          description.appendChild(overview)
+          row.appendChild(title)
+          document.getElementById("results").appendChild(row)
+          var img = document.createElement("img");
+          img.src = POSTER_PATH + movie.poster_path
+          image.appendChild(img)
+          row.appendChild(img)
+          row.appendChild(description)
+      })
+
+    }
+
+    // Send request
+    request.send()  
+  }
+  document.getElementById("searchBttn").addEventListener("click", getMovie)
+</script>
 

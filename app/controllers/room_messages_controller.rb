@@ -84,7 +84,7 @@ class RoomMessagesController < ApplicationController
   		i+=1
   	end
   	
-  	generate_hash
+  	@attributes = generate_hash
   		
   	#parse response text, write text response to chat
   	i = 0
@@ -99,7 +99,10 @@ class RoomMessagesController < ApplicationController
 		 		RoomChannel.broadcast_to @room, @watson_message
 	 		end
 	 		i+=1
-  	end	
+  	end
+  	respond_to do |format|
+  		format.js { render :js => "updateList();"}
+  	end
   	
   end
   
