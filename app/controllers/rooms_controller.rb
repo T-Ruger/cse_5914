@@ -19,7 +19,7 @@ class RoomsController < ApplicationController
 
   def create
   	#delete all previous rooms created by user
-  	Room.where(creator: current_user.username).delete_all
+  	#Room.where(creator: current_user.username).delete_all
   	
   	@room = Room.new permitted_parameters
   	@room.creator = current_user.username

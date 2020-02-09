@@ -198,6 +198,7 @@
   var database = new TMDB();
   function updateList() {
       var attributes = "<%= @attributes %>"
+      console.log(attributes)
       if (attributes.size != 0) {
         deleteTable()
         createTableHead(document.getElementById("movies"))
@@ -321,6 +322,5 @@
     // Send request
     request.send()  
   }
-  document.getElementById("searchBttn").addEventListener("click", getMovie)
 </script>
 

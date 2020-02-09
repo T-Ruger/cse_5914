@@ -111,10 +111,6 @@ class RoomMessagesController < ApplicationController
 	 		end
 	 		i+=1
   	end
-  	respond_to do |format|
-  		format.js { render :js => "updateList();"}
-  	end
-  	
   end
   
   #generate a hash of all current entities and their values
