@@ -4,20 +4,23 @@ require "ibm_watson/assistant_v2"
 include IBMWatson
 
 class RoomMessagesController < ApplicationController
-  before_action :load_entities
-	after_action :get_response, only: [:create]
+  before_action :load_entities, only: [:create]
+	#after_action :get_response, only: [:create]
+	#after_action :update_list, only: [:get_response]
 	
   def create
     @room_message = RoomMessage.create user: current_user,
                                        room: @room,
                                        watsonmsg: false,
-                                       message: params.dig(:room_message, :message)
+                                       message: params.dig(:room_message, :message),
+                                       genre: @room.genre
 
    RoomChannel.broadcast_to @room, @room_message
-	 #get_response
+	 get_response
+	 #update_list if generate_hash.size > 0
   end
 
-  protected
+  #protected
 
   def load_entities
     @room = Room.find params.dig(:room_message, :room_id)
@@ -50,9 +53,7 @@ class RoomMessagesController < ApplicationController
 				refresh_session
 		end
 		
-		if(!error) then
-			interpret_response(response)
-		end
+		interpret_response(response) if !error
   end
   
   def interpret_response(response)
@@ -75,41 +76,53 @@ class RoomMessagesController < ApplicationController
 				case entity
 					when "genre"
 						if @room.genre == nil || @room.genre == "" || intent == "request_genre" then
-							@room.genre = value
+							@room.genre = value.to_s
+							#Room.update(@room.id, genre: "action")
 						end
 					when "director"
 						if @room.director == nil || @room.director == "" || intent == "request_director" then
-							@room.director = value
+							@room.director = value.to_s
 						end
 					when "time_period"
 						if @room.timeperiod == nil || @room.timeperiod == "" || intent == "request_time_period" then
-							@room.timeperiod = value
+							@room.timeperiod = value.to_s
 						end
 					when "length"
 						if @room.length == nil || @room.length == "" || intent == "request_length" then
-							@room.length = value
+							@room.length = value.to_s
 						end
 				end
 				@room.save
   		end
   		i+=1
   	end
-  	
-  	@attributes = generate_hash
   		
   	#parse response text, write text response to chat
   	i = 0
   	while i < response.result["output"]["generic"].size do
   		response_text = response.result["output"]["generic"][i]["text"]
   		
-  		if response_text != nil then
+  		#construct recommendation message
+  		if response_text.include? "Here's" then
+  			response_text = construct_recommendation_msg
+  		end
+  		
+  		if response_text != nil && response_text != "" then
 				@watson_message = RoomMessage.create user: current_user,
 		 																						room: @room,
 		 																						watsonmsg: true,
-		 																						message: response_text
+		 																						message: response_text,
+		 																						genre: @room.genre
 		 		RoomChannel.broadcast_to @room, @watson_message
 	 		end
 	 		i+=1
+  	end
+  end
+  
+  def update_list
+ 	  @attributes = generate_hash
+  	respond_to do |format|
+  		format.js { render :js => "updateList();"}
   	end
   end
   
@@ -167,8 +180,34 @@ class RoomMessagesController < ApplicationController
   		
   	end
   	
+		gon.with_genres = "action"
   	puts "\n\n" + entity_hash.to_s + "\n\n"
   	return entity_hash
+  end
+  
+  #construct recommendation message
+  def construct_recommendation_msg
+  	response_text = "I recommend this "
+  			if @room.length != nil && @room.length != "" then
+  				response_text += @room.length.to_s + " "
+  			end
+  			
+  			if @room.genre != nil && @room.genre != "" then
+  				response_text += @room.genre.to_s + " "
+				end
+				
+				response_text += "movie"
+				
+				if @room.timeperiod != nil && @room.timeperiod != "" then
+					response_text += " from the " + @room.timeperiod.to_s
+				end
+				
+				if @room.director != nil && @room.director != "" then
+					response_text += " directed by " + @room.director.to_s
+				end
+				
+				response_text += "."
+				return response_text
   end
   
   #get new session id for room if session is expired
@@ -176,7 +215,8 @@ class RoomMessagesController < ApplicationController
   	@watson_message = RoomMessage.create user: current_user,
 	 																						room: @room,
 	 																						watsonmsg: true,
-	 																						message: "The session has expired. Starting a new chat."
+	 																						message: "The session has expired. Starting a new chat.",
+	 																						genre: @room.genre
 		RoomChannel.broadcast_to @room, @watson_message
 		
 		authenticator = Authenticators::IamAuthenticator.new(
@@ -196,7 +236,8 @@ class RoomMessagesController < ApplicationController
 		@welcome_message = RoomMessage.create user: current_user,
 																					room: @room,
 																					watsonmsg: true,
-																					message: "Welcome to Movie On Rails! How can I help you?"
+																					message: "Welcome to Movie On Rails! How can I help you?",
+																					genre: @room.genre
 		RoomChannel.broadcast_to @room, @welcome_message
   end
 end

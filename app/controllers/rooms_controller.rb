@@ -21,10 +21,12 @@ class RoomsController < ApplicationController
   	#delete all previous rooms created by user
   	#Room.where(creator: current_user.username).delete_all
   	
-  	@room = Room.new permitted_parameters
+  	@room = Room.new
   	@room.creator = current_user.username
   	
   	#watson session setup
+  	
+  	@room.genre = "test"
 		@room.apikey = "tR-_ntZkOUpqFIKbGjJae69dqCWOOQ8wKCQaCuaDASiA"
 		@room.assistantid = "b6d443ee-862a-4377-9f66-959b144757d2"
 		@room.serviceurl = "https://api.us-south.assistant.watson.cloud.ibm.com/instances/f965de9f-b2e3-4673-90ca-598d335efba8"
@@ -58,6 +60,7 @@ class RoomsController < ApplicationController
   def update
     if @room.update_attributes(permitted_parameters)
       flash[:success] = "Room #{@room.name} was updated successfully"
+      puts"\n\nupdate compleete\n\n"
       redirect_to action:"show"
     else
       render :new
@@ -76,7 +79,7 @@ class RoomsController < ApplicationController
   end
 
   def permitted_parameters
-    #params.require(:room).permit(:name)
+    params.require(:room).permit!
   end
   
   def get_new_session_id

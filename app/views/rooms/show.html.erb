@@ -1,6 +1,7 @@
 <h1>
   <%= @room.name %>
 </h1>
+
 <style>
 	.row {
     min-height: 90%;
@@ -24,7 +25,7 @@
 		        <div class="row no-gutters">
 		          <div class="col">
 		            <div class="message-content">
-		              <p class="text-left" data-role="message-text">
+		              <p class="text-left" data-role="message-text" style="padding-left: 5px; padding-right: 5px">
 		                <%= room_message.message %>
 		              </p>
 		            </div>
@@ -41,7 +42,7 @@
 		        	
 		          <div class="col">
 		            <div class="watson-message-content">
-		              <p class="text-left" data-role="message-text">
+		              <p class="text-left" data-role="message-text" style="padding-left: 5px; padding-right: 5px" >
 		                <%= room_message.message %>
 		              </p>
 		            </div>
@@ -75,13 +76,9 @@
     <div class="row no-gutters">
       <div class="col">
         <div class="message-content">
-          <p class="text-left" data-role="message-text">
+          <p class="text-left" data-role="message-text" style="padding-left: 5px; padding-right: 5px">
 
           </p>
-
-          <div class="text-right">
-            <small data-role="message-date">
-            </small>
           </div>
         </div>
       </div>
@@ -98,13 +95,9 @@
       
       <div class="col">
         <div class="watson-message-content">
-          <p class="mb-1" data-role="message-text">
+          <p class="mb-1" data-role="message-text" style="padding-left: 5px; padding-right: 5px">
 
           </p>
-
-          <div class="text-left">
-            <small data-role="message-date">
-            </small>
           </div>
         </div>
       </div>
@@ -182,7 +175,7 @@
 
     multiSearch(attributes) {
       var request = new XMLHttpRequest()
-      var urlStr = BASE_PATH + "/discover/movie?api_key=" + api_key + AMP + LANGUAGE + AMP + SORT_BY + AMP + INCLUDE_ADULT + PAGE_NUM
+      var urlStr = BASE_PATH + "/discover/movie?api_key=" + api_key + AMP + LANGUAGE + AMP + SORT_BY + AMP + INCLUDE_ADULT + AMP + PAGE_NUM
       for (let [key, value] of attributes) {
         if (key == 'with_genres') {
           value = GENRES.get(value.toLowerCase())
@@ -191,13 +184,14 @@
         urlStr = urlStr + AMP + key + "=" + value
       }
       request.open('GET', urlStr, true)
+      console.log(urlStr)
+      console.log(request)
       return request
     }
 
   }
   var database = new TMDB();
-  function updateList() {
-      var attributes = "<%= @attributes %>"
+  function updateList(attributes) {
       console.log(attributes)
       if (attributes.size != 0) {
         deleteTable()
