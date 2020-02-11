@@ -180,12 +180,9 @@
         if (key == 'with_genres') {
           value = GENRES.get(value.toLowerCase())
         }
-        console.log(urlStr)
         urlStr = urlStr + AMP + key + "=" + value
       }
       request.open('GET', urlStr, true)
-      console.log(urlStr)
-      console.log(request)
       return request
     }
 
@@ -193,11 +190,11 @@
   var database = new TMDB();
   function updateList(attributes) {
       console.log(attributes)
-      if (attributes.size != 0) {
         deleteTable()
         createTableHead(document.getElementById("movies"))
         var request = database.multiSearch(attributes)
         request.onload = function () {
+        	console.log("hello")
           var body = document.createElement("tbody")
           body.id = "results"
           document.getElementById("movies").appendChild(body)
@@ -227,11 +224,10 @@
               image.appendChild(img)
               row.appendChild(img)
               row.appendChild(description)
-
-        })
-        request.send()
-      }
-    }
+      		})
+    	}
+    	console.log(request)
+    	request.send()
   }
 
 
