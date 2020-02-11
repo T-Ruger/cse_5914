@@ -180,12 +180,10 @@
         if (key == 'with_genres') {
           value = GENRES.get(value.toLowerCase())
         }
-        console.log(urlStr)
         urlStr = urlStr + AMP + key + "=" + value
       }
       request.open('GET', urlStr, true)
       console.log(urlStr)
-      console.log(request)
       return request
     }
 

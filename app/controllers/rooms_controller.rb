@@ -26,7 +26,6 @@ class RoomsController < ApplicationController
   	
   	#watson session setup
   	
-  	@room.genre = "test"
 		@room.apikey = "tR-_ntZkOUpqFIKbGjJae69dqCWOOQ8wKCQaCuaDASiA"
 		@room.assistantid = "b6d443ee-862a-4377-9f66-959b144757d2"
 		@room.serviceurl = "https://api.us-south.assistant.watson.cloud.ibm.com/instances/f965de9f-b2e3-4673-90ca-598d335efba8"
