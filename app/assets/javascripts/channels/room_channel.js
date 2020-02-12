@@ -14,8 +14,8 @@ $(function() {
       },
       {
         received: function(data) {
-        console.log(data)
-        console.log(data.genre)
+        console.log(data.params)
+        //write messages to chat
         	if(!data.watsonmsg){
 		        var content = messageTemplate.children().clone(true, true);
 		        content.find('[data-role="user-avatar"]').attr('src', data.user_avatar_url);
@@ -28,10 +28,16 @@ $(function() {
 		        content.find('[data-role="message-text"]').text(data.message);
 		        $element.append(content);
 		        $element.animate({ scrollTop: $element.prop("scrollHeight")}, 1000);
+		        
+		        //build attribute hash
+		        var m = new Map();
+		        var json = JSON.parse(data.params)
+		        for (var k in json) m.set(k, json[k])
+		        
+		        //send hash to updateList
+				    updateList(m);
+				    console.log(m)
           }
-        var m = new Map();
-        m.set("with_genres", data.genre);
-        updateList(m);
         }
       }
     );

@@ -34,11 +34,12 @@ class RoomsController < ApplicationController
 		@room.sessionid = get_new_session_id
 		
 		#send welcome message when room is created
-		@welcome_message = RoomMessage.create user: current_user,
+		@welcomemsg = RoomMessage.create user: current_user,
 	 																						room: @room,
 	 																						watsonmsg: true,
-	 																						message: @welcome_message_text
-	 	RoomChannel.broadcast_to @room, @welcome_message
+	 																						message: @welcome_message_text,
+	 																						params: ""
+	 	RoomChannel.broadcast_to @room, @welcomemsg
 		
     if @room.save
       flash[:success] = "Room #{@room.name} was created successfully"

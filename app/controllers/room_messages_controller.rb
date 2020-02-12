@@ -13,14 +13,13 @@ class RoomMessagesController < ApplicationController
                                        room: @room,
                                        watsonmsg: false,
                                        message: params.dig(:room_message, :message),
-                                       genre: @room.genre
+                                       params: generate_hash.to_json
 
    RoomChannel.broadcast_to @room, @room_message
 	 get_response
-	 #update_list if generate_hash.size > 0
   end
 
-  #protected
+  protected
 
   def load_entities
     @room = Room.find params.dig(:room_message, :room_id)
@@ -68,7 +67,6 @@ class RoomMessagesController < ApplicationController
   		value = response.result["output"]["entities"][i]["value"]
   		confidence = response.result["output"]["entities"][i]["confidence"]
   		
-  		
   		#update room entity values
   		if confidence.to_f > found_entities[entity].to_f then
   			found_entities[entity] = confidence.to_f
@@ -77,7 +75,6 @@ class RoomMessagesController < ApplicationController
 					when "genre"
 						if @room.genre == nil || @room.genre == "" || intent == "request_genre" then
 							@room.genre = value.to_s
-							#Room.update(@room.id, genre: "action")
 						end
 					when "director"
 						if @room.director == nil || @room.director == "" || intent == "request_director" then
@@ -107,22 +104,16 @@ class RoomMessagesController < ApplicationController
   			response_text = construct_recommendation_msg
   		end
   		
+  		#broadcast watson responses
   		if response_text != nil && response_text != "" then
 				@watson_message = RoomMessage.create user: current_user,
 		 																						room: @room,
 		 																						watsonmsg: true,
 		 																						message: response_text,
-		 																						genre: @room.genre
+		 																						params: generate_hash.to_json
 		 		RoomChannel.broadcast_to @room, @watson_message
 	 		end
 	 		i+=1
-  	end
-  end
-  
-  def update_list
- 	  @attributes = generate_hash
-  	respond_to do |format|
-  		format.js { render :js => "updateList();"}
   	end
   end
   
@@ -179,9 +170,7 @@ class RoomMessagesController < ApplicationController
   		end
   		
   	end
-  	
-		gon.with_genres = "action"
-  	puts "\n\n" + entity_hash.to_s + "\n\n"
+ 
   	return entity_hash
   end
   
@@ -216,7 +205,7 @@ class RoomMessagesController < ApplicationController
 	 																						room: @room,
 	 																						watsonmsg: true,
 	 																						message: "The session has expired. Starting a new chat.",
-	 																						genre: @room.genre
+	 																						params: generate_hash.to_json
 		RoomChannel.broadcast_to @room, @watson_message
 		
 		authenticator = Authenticators::IamAuthenticator.new(
@@ -237,7 +226,7 @@ class RoomMessagesController < ApplicationController
 																					room: @room,
 																					watsonmsg: true,
 																					message: "Welcome to Movie On Rails! How can I help you?",
-																					genre: @room.genre
+																					params: generate_hash.to_json
 		RoomChannel.broadcast_to @room, @welcome_message
   end
 end

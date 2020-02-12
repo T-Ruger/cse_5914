@@ -17,6 +17,7 @@
 	<div class = "col">
 		<table id = "movies" class="table table-striped table-bordered"></table>
 	</div>
+	<!-- chat container -->
   <div class="col" style="max-width: 30vw;">
     <div class="chat" data-channel-subscribe="room" data-room-id="<%= @room.id %>">
       <% @room_messages.each do |room_message| %>
@@ -35,11 +36,9 @@
         <% else %>
         	<div class="chat-message-container">
 		        <div class="row no-gutters">
-		        
 		        	<div class="col-auto text-center">
 		        	  <img src="<%= room_message.user.gravatar_url %>" class="avatar" alt="">
 		        	</div>
-		        	
 		          <div class="col">
 		            <div class="watson-message-content">
 		              <p class="text-left" data-role="message-text" style="padding-left: 5px; padding-right: 5px" >
@@ -52,7 +51,7 @@
         <% end %>
       <% end %>
     </div>
-
+		<!--chat box input form-->
     <%= simple_form_for @room_message, remote: true do |form| %>
       <div class="input-group mb-3">
         <%= form.input :message, as: :string,
@@ -71,6 +70,8 @@
     <% end %>
   </div>
 </div>
+
+<!-- Templates for messages -->
 <div class="d-none" data-role="message-template">
   <div class="chat-message-container">
     <div class="row no-gutters">
@@ -91,17 +92,14 @@
     <div class="row no-gutters">
     	<div class="col-auto text-center">
         <img src="" class="avatar" alt="" data-role="user-avatar">
-      </div>
-      
+      </div>  
       <div class="col">
         <div class="watson-message-content">
           <p class="mb-1" data-role="message-text" style="padding-left: 5px; padding-right: 5px">
-
           </p>
           </div>
         </div>
-      </div>
-      
+      </div> 
     </div>
   </div>
 </div>
@@ -191,11 +189,11 @@
   var database = new TMDB();
   function updateList(attributes) {
       console.log(attributes)
-      if (attributes.size != 0) {
         deleteTable()
         createTableHead(document.getElementById("movies"))
         var request = database.multiSearch(attributes)
         request.onload = function () {
+        	console.log("hello")
           var body = document.createElement("tbody")
           body.id = "results"
           document.getElementById("movies").appendChild(body)
@@ -225,11 +223,10 @@
               image.appendChild(img)
               row.appendChild(img)
               row.appendChild(description)
-
-        })
-        request.send()
-      }
-    }
+      		})
+    	}
+    	console.log(request)
+    	request.send()
   }
 
 
