@@ -195,7 +195,6 @@
         createTableHead(document.getElementById("movies"))
         var request = database.multiSearch(attributes)
         request.onload = function () {
-        	console.log("hello")
           var body = document.createElement("tbody")
           body.id = "results"
           document.getElementById("movies").appendChild(body)
@@ -227,7 +226,6 @@
               row.appendChild(description)
       		})
     	}
-    	console.log(request)
     	request.send()
   }
 
