@@ -13,7 +13,7 @@ class RoomMessagesController < ApplicationController
                                        room: @room,
                                        watsonmsg: false,
                                        message: params.dig(:room_message, :message),
-                                       params: generate_hash.to_json
+                                       params: @room.params
 
    RoomChannel.broadcast_to @room, @room_message
 	 get_response
@@ -62,33 +62,80 @@ class RoomMessagesController < ApplicationController
   	intent = response.result["output"]["intents"][0]["intent"]
   	i = 0
   	found_entities = Hash.new
+  	
+  	#set up params JSON
+  	params = @room.params
+  	params_json = JSON.parse(params)
+  	
   	while i < response.result["output"]["entities"].size do
   		entity = response.result["output"]["entities"][i]["entity"]
   		value = response.result["output"]["entities"][i]["value"]
   		confidence = response.result["output"]["entities"][i]["confidence"]
   		
-  		#update room entity values
+  		#update room param values
   		if confidence.to_f > found_entities[entity].to_f then
   			found_entities[entity] = confidence.to_f
 				puts found_entities[entity]
 				case entity
 					when "genre"
-						if @room.genre == nil || @room.genre == "" || intent == "request_genre" then
-							@room.genre = value.to_s
+						if params_json["with_genres"] == nil || params_json["with_genres"] == "" || intent == "request_genre" then
+							params_json["with_genres"] = value.to_s
 						end
+						
 					when "person"
-						if @room.people == nil || @room.people == "" || intent == "request_person" then
-							@room.people = value.to_s
+						#push to people array or create it
+						if params_json["with_people"] == nil || params_json["with_people"] == "" || intent == "request_person" then
+							people = params_json["with_people"]
+							if people == nil || people == "" then
+								people = Array.new
+							end
+							
+							people.push(value.to_s)
+							params_json["with_people"] = people
+							puts "\n\n" + people.to_s + "\n\n"
 						end
+						
 					when "time_period"
-						if @room.timeperiod == nil || @room.timeperiod == "" || intent == "request_time_period" then
-							@room.timeperiod = value.to_s
+						#set time period
+						case value.to_s
+							when "1900s"
+								params_json["primary_release_date.gte"] = "1900-01-01"
+								params_json["primary_release_date.lte"] = "1999-12-31"
+							when "2000s"
+								params_json["primary_release_date.gte"] = "2000-01-01"
+							when "2010s"
+								params_json["primary_release_date.gte"] = "2010-01-01"
+								params_json["primary_release_date.lte"] = "2019-12-31"
+							when "2020s"
+								params_json["primary_release_date.gte"] = "2020-01-01"
+								params_json["primary_release_date.lte"] = "2029-12-31"
+							when "30s"
+								params_json["primary_release_date.gte"] = "1930-01-01"
+								params_json["primary_release_date.lte"] = "1939-12-31"
+							when "40s"
+								params_json["primary_release_date.gte"] = "1940-01-01"
+								params_json["primary_release_date.lte"] = "1949-12-31"
+							when "50s"
+								params_json["primary_release_date.gte"] = "1950-01-01"
+								params_json["primary_release_date.lte"] = "1959-12-31"
+							when "60s"
+								params_json["primary_release_date.gte"] = "1960-01-01"
+								params_json["primary_release_date.lte"] = "1969-12-31"
+							when "70s"
+								params_json["primary_release_date.gte"] = "1970-01-01"
+								params_json["primary_release_date.lte"] = "1979-12-31"
+							when "80s"
+								params_json["primary_release_date.gte"] = "1980-01-01"
+								params_json["primary_release_date.lte"] = "1989-12-31"
+							when "90s"
+								params_json["primary_release_date.gte"] = "1990-01-01"
+								params_json["primary_release_date.lte"] = "1999-12-31"
 						end
 					when "length"
-						if @room.length == nil || @room.length == "" || intent == "request_length" then
-							@room.length = value.to_s
-						end
+						
 				end
+				#replace "=>" with ":" because javascript is dumb
+				@room.params = params_json.to_s.gsub("=>", ":")
 				@room.save
   		end
   		i+=1
@@ -110,93 +157,33 @@ class RoomMessagesController < ApplicationController
 		 																						room: @room,
 		 																						watsonmsg: true,
 		 																						message: response_text,
-		 																						params: generate_hash.to_json
+		 																						params: @room.params
 		 		RoomChannel.broadcast_to @room, @watson_message
 	 		end
 	 		i+=1
   	end
   end
   
-  #generate a hash of all current entities and their values
-  def generate_hash
-  	entity_hash = Hash.new
-  	
-  	if @room.genre != nil && @room.genre != "" then
-  		entity_hash["with_genres"] = @room.genre
-  	end
-  	
-  	if @room.people != nil && @room.people != "" then
-  		entity_hash["with_people"] = @room.people
-  	end
-  	
-  	if @room.length != nil && @room.length != "" then
-  		entity_hash["with_runtime.lte"] = @room.length
-  	end
-  	
-  	if @room.timeperiod != nil && @room.timeperiod != "" then
-  		case @room.timeperiod
-  			when "1900s"
-  				entity_hash["primary_release_date.gte"] = "1900-01-01"
-  				entity_hash["primary_release_date.lte"] = "1999-12-31"
-				when "2000s"
-  				entity_hash["primary_release_date.gte"] = "2000-01-01"
-				when "2010s"
-  				entity_hash["primary_release_date.gte"] = "2010-01-01"
-  				entity_hash["primary_release_date.lte"] = "2019-12-31"
-				when "2020s"
-  				entity_hash["primary_release_date.gte"] = "2020-01-01"
-  				entity_hash["primary_release_date.lte"] = "2029-12-31"
-				when "30s"
-  				entity_hash["primary_release_date.gte"] = "1930-01-01"
-  				entity_hash["primary_release_date.lte"] = "1939-12-31"
-				when "40s"
-  				entity_hash["primary_release_date.gte"] = "1940-01-01"
-  				entity_hash["primary_release_date.lte"] = "1949-12-31"
-				when "50s"
-  				entity_hash["primary_release_date.gte"] = "1950-01-01"
-  				entity_hash["primary_release_date.lte"] = "1959-12-31"
-				when "60s"
-  				entity_hash["primary_release_date.gte"] = "1960-01-01"
-  				entity_hash["primary_release_date.lte"] = "1969-12-31"
-				when "70s"
-  				entity_hash["primary_release_date.gte"] = "1970-01-01"
-  				entity_hash["primary_release_date.lte"] = "1979-12-31"
-				when "80s"
-  				entity_hash["primary_release_date.gte"] = "1980-01-01"
-  				entity_hash["primary_release_date.lte"] = "1989-12-31"
-				when "90s"
-  				entity_hash["primary_release_date.gte"] = "1990-01-01"
-  				entity_hash["primary_release_date.lte"] = "1999-12-31"
-  		end
-  		
-  	end
- 
-  	return entity_hash
-  end
-  
   #construct recommendation message
   def construct_recommendation_msg
+  	params_json = JSON.parse(@room.params)
   	response_text = "I recommend this "
-  			if @room.length != nil && @room.length != "" then
-  				response_text += @room.length.to_s + " "
+  			if params_json["with_runtime.lte"] != nil && params_json["with_runtime.lte"] != "" then
+  				response_text += params_json["with_runtime.lte"].to_s + " "
   			end
   			
-  			if @room.genre != nil && @room.genre != "" then
-  				response_text += @room.genre.to_s + " "
+  			if params_json["with_genres"] != nil && params_json["with_genres"] != "" then
+  				response_text += params_json["with_genres"].to_s + " "
 				end
 				
 				response_text += "movie"
 				
-				if @room.timeperiod != nil && @room.timeperiod != "" then
-					response_text += " from the " + @room.timeperiod.to_s
-				end
-				
-				if @room.people != nil && @room.people != "" then
-					response_text += " with " + @room.people.to_s
+				if params_json["with_people"] != nil && params_json["with_people"] != "" then
+					response_text += " with " + params_json["with_people"]
 				end
 				
 				response_text += "."
-				return response_text
+				return "I recommend these movies."
   end
   
   #get new session id for room if session is expired
@@ -205,7 +192,7 @@ class RoomMessagesController < ApplicationController
 	 																						room: @room,
 	 																						watsonmsg: true,
 	 																						message: "The session has expired. Starting a new chat.",
-	 																						params: generate_hash.to_json
+	 																						params: @room.params
 		RoomChannel.broadcast_to @room, @watson_message
 		
 		authenticator = Authenticators::IamAuthenticator.new(
@@ -226,7 +213,7 @@ class RoomMessagesController < ApplicationController
 																					room: @room,
 																					watsonmsg: true,
 																					message: "Welcome to Movie On Rails! How can I help you?",
-																					params: generate_hash.to_json
+																					params: @room.params
 		RoomChannel.broadcast_to @room, @welcome_message
   end
 end

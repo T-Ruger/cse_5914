@@ -23,6 +23,7 @@ class RoomsController < ApplicationController
   	
   	@room = Room.new
   	@room.creator = current_user.username
+  	@room.params = "{}"
   	
   	#watson session setup
   	
@@ -60,7 +61,7 @@ class RoomsController < ApplicationController
   def update
     if @room.update_attributes(permitted_parameters)
       flash[:success] = "Room #{@room.name} was updated successfully"
-      puts"\n\nupdate compleete\n\n"
+      puts"\n\nupdate complete\n\n"
       redirect_to action:"show"
     else
       render :new

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_18_142450) do
+ActiveRecord::Schema.define(version: 2020_02_18_144406) do
 
   create_table "room_messages", force: :cascade do |t|
     t.integer "room_id"
@@ -32,11 +32,8 @@ ActiveRecord::Schema.define(version: 2020_02_18_142450) do
     t.string "apikey"
     t.string "assistantid"
     t.string "serviceurl"
-    t.string "genre"
-    t.string "people"
-    t.string "timeperiod"
-    t.string "length"
     t.string "creator"
+    t.string "params"
     t.index ["name"], name: "index_rooms_on_name", unique: true
   end
 

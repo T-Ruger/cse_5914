@@ -180,7 +180,11 @@
         if (key == 'with_genres') {
           value = GENRES.get(value.toLowerCase())
         }
-        urlStr = urlStr + AMP + key + "=" + value
+        
+        //remove 'if' once people is implemented
+        if (key != 'with_people'){
+        	urlStr = urlStr + AMP + key + "=" + value
+        }
       }
       request.open('GET', urlStr, true)
       console.log(urlStr)
