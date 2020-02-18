@@ -76,9 +76,9 @@ class RoomMessagesController < ApplicationController
 						if @room.genre == nil || @room.genre == "" || intent == "request_genre" then
 							@room.genre = value.to_s
 						end
-					when "director"
-						if @room.director == nil || @room.director == "" || intent == "request_director" then
-							@room.director = value.to_s
+					when "person"
+						if @room.people == nil || @room.people == "" || intent == "request_person" then
+							@room.people = value.to_s
 						end
 					when "time_period"
 						if @room.timeperiod == nil || @room.timeperiod == "" || intent == "request_time_period" then
@@ -125,8 +125,8 @@ class RoomMessagesController < ApplicationController
   		entity_hash["with_genres"] = @room.genre
   	end
   	
-  	if @room.director != nil && @room.director != "" then
-  		entity_hash["director"] = @room.director
+  	if @room.people != nil && @room.people != "" then
+  		entity_hash["with_people"] = @room.people
   	end
   	
   	if @room.length != nil && @room.length != "" then
@@ -191,8 +191,8 @@ class RoomMessagesController < ApplicationController
 					response_text += " from the " + @room.timeperiod.to_s
 				end
 				
-				if @room.director != nil && @room.director != "" then
-					response_text += " directed by " + @room.director.to_s
+				if @room.people != nil && @room.people != "" then
+					response_text += " with " + @room.people.to_s
 				end
 				
 				response_text += "."

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_11_232802) do
+ActiveRecord::Schema.define(version: 2020_02_18_142450) do
 
   create_table "room_messages", force: :cascade do |t|
     t.integer "room_id"
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 2020_02_11_232802) do
     t.string "assistantid"
     t.string "serviceurl"
     t.string "genre"
-    t.string "director"
+    t.string "people"
     t.string "timeperiod"
     t.string "length"
     t.string "creator"
