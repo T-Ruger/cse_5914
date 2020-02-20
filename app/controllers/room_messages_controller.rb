@@ -70,6 +70,8 @@ class RoomMessagesController < ApplicationController
   	while i < response.result["output"]["entities"].size do
   		entity = response.result["output"]["entities"][i]["entity"]
   		value = response.result["output"]["entities"][i]["value"]
+  		
+  		#confidence used when watson detects multiple possibilities for entity
   		confidence = response.result["output"]["entities"][i]["confidence"]
   		
   		#update room param values
@@ -82,7 +84,7 @@ class RoomMessagesController < ApplicationController
 							params_json["with_genres"] = value.to_s
 						end
 						
-					when "person"
+					when "sys-person"
 						#push to people array or create it
 						if params_json["with_people"] == nil || params_json["with_people"] == "" || intent == "request_person" then
 							people = params_json["with_people"]

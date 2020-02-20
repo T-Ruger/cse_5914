@@ -15,10 +15,10 @@
 </style>
 <div class = "row">
 	<div class = "col">
-		<div class="overflow-auto" style="height: 10%;">
-			<table id = "movies" class="table table-striped table-bordered"></table>
+		<div class="overflow-auto" style="height: 100%;" id="deck-container">
 		</div>
 	</div>
+	
 	<!-- chat container -->
   <div class="col" style="max-width: 30vw;">
     <div class="chat" data-channel-subscribe="room" data-room-id="<%= @room.id %>">
@@ -194,11 +194,13 @@
   }
   var database = new TMDB();
   function updateList(attributes) {
-      console.log(attributes)
-        deleteTable()
-        createTableHead(document.getElementById("movies"))
+      	//console.log(attributes)
+        //deleteTable()
+        //createTableHead(document.getElementById("movies"))
+        
         var request = database.multiSearch(attributes)
         request.onload = function () {
+        	/*
           var body = document.createElement("tbody")
           body.id = "results"
           document.getElementById("movies").appendChild(body)
@@ -229,6 +231,38 @@
               row.appendChild(img)
               row.appendChild(description)
       		})
+      		*/
+      		//get container
+      		const deckContainer = document.getElementById('deck-container')
+      		deckContainer.innerHTML = ""
+      		//create new row for movie cards
+      		const deck = document.createElement('div')
+      		deck.classList = 'card-deck';
+      		
+      		//Begin accessing JSON data here
+      		var data = JSON.parse(this.response)
+      		var results = data["results"]
+      		var i = 0;
+      		
+      		results.forEach(movie => {
+      			if(i<5){
+      			const movieCard = `<div class="card" data-role="movie-card-template">
+															<img class="card-img-top" src="${POSTER_PATH + movie.poster_path}" alt="Card image cap" data-role="card-poster">
+															<div class="card-body">
+																	<h5 class="card-title" data-role="card-title">${movie.original_title}</h5>
+																	
+																	<div class="btn-group">
+																			<button type="button" class="btn btn-secondary">Seen</button>
+																			<button type="button" class="btn btn-secondary">Watchlist</button>
+																	</div>
+															</div>
+														</div>`;
+														
+      			deck.innerHTML += movieCard
+      			i++
+      			}
+      		})
+      		deckContainer.innerHTML += `<div class = "card-deck">` + deck.innerHTML + `</div>`
     	}
     	request.send()
   }
@@ -308,6 +342,9 @@
           image.appendChild(img)
           row.appendChild(img)
           row.appendChild(description)
+          
+          
+          
       })
 
     }
