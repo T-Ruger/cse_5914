@@ -15,7 +15,7 @@
 </style>
 <div class = "row">
 	<div class = "col">
-		<div class="overflow-auto" style="height: 100%;" id="deck-container">
+		<div class="overflow-auto" style="height: 43%;" id="results-container">
 		</div>
 	</div>
 	
@@ -195,74 +195,54 @@
   var database = new TMDB();
   function updateList(attributes) {
       	//console.log(attributes)
-        //deleteTable()
-        //createTableHead(document.getElementById("movies"))
-        
         var request = database.multiSearch(attributes)
         request.onload = function () {
-        	/*
-          var body = document.createElement("tbody")
-          body.id = "results"
-          document.getElementById("movies").appendChild(body)
-            // Begin accessing JSON data here
-          var data = JSON.parse(this.response)
-          var results = data["results"]
-          // Create a row for each movie.
-          results.forEach(movie => {
-            // Create row element for the movie
-            // and applicable fields for movie information.
-              var row = document.createElement("tr")
-              var title = document.createElement("td")
-              var image = document.createElement("td")
-              var description = document.createElement("td")
-              // Create text nodes for movie information.
-
-              // Movie Title
-              var titleResp = document.createTextNode(movie.original_title)
-              // Movie Description
-              var overview = document.createTextNode(movie.overview)
-              title.appendChild(titleResp)
-              description.appendChild(overview)
-              row.appendChild(title)
-              document.getElementById("results").appendChild(row)
-              var img = document.createElement("img");
-              img.src = POSTER_PATH + movie.poster_path
-              image.appendChild(img)
-              row.appendChild(img)
-              row.appendChild(description)
-      		})
-      		*/
-      		//get container
-      		const deckContainer = document.getElementById('deck-container')
-      		deckContainer.innerHTML = ""
-      		//create new row for movie cards
-      		const deck = document.createElement('div')
-      		deck.classList = 'card-deck';
+        
+      		//get and clear results container div
+      		const resultsContainer = document.getElementById('results-container')
+      		resultsContainer.innerHTML = ""
       		
       		//Begin accessing JSON data here
       		var data = JSON.parse(this.response)
       		var results = data["results"]
       		var i = 0;
+      		//start new grid row
+      		var gridRow = `<div class = "card-group">`
       		
       		results.forEach(movie => {
+      			//set number of cards per row
       			if(i<5){
+      			//HTML for movie card
       			const movieCard = `<div class="card" data-role="movie-card-template">
-															<img class="card-img-top" src="${POSTER_PATH + movie.poster_path}" alt="Card image cap" data-role="card-poster">
-															<div class="card-body">
-																	<h5 class="card-title" data-role="card-title">${movie.original_title}</h5>
+      												<div>
+																<img class="card-img-top" src="${POSTER_PATH + movie.poster_path}" alt="Card image cap" data-role="card-poster" title="${movie.overview}">
+															</div>
+															<div class="card-body d-flex flex-column">
+																	<h5 class="card-title" data-role="card-title">${movie.original_title} (${movie.release_date.substring(0,4)})</h5>
 																	
-																	<div class="btn-group">
-																			<button type="button" class="btn btn-secondary">Seen</button>
-																			<button type="button" class="btn btn-secondary">Watchlist</button>
+																	<div class="btn-group-vertical mt-auto">
+																			<button type="button" class="btn btn-primary">Add To Watchlist</button>
+																			<button type="button" class="btn btn-secondary">Not Interested</button>
 																	</div>
 															</div>
 														</div>`;
 														
-      			deck.innerHTML += movieCard
+						//add card to row								
+      			gridRow += movieCard
       			i++
-      			}
+      			}else{
+      				//close gridRow div
+      				gridRow += `</div>`
+      				
+      				//append row to resultsContainer 
+      				resultsContainer.innerHTML += gridRow
+      				
+      				//start new row
+      				gridRow = `<div class = "card-group">`
+      				i = 0
+    				}
       		})
-      		deckContainer.innerHTML += `<div class = "card-deck">` + deck.innerHTML + `</div>`
+      		
     	}
     	request.send()
   }
