@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_18_144406) do
+ActiveRecord::Schema.define(version: 2020_02_23_225920) do
+
+  create_table "movies", primary_key: "movie_id", force: :cascade do |t|
+    t.string "poster_url"
+    t.string "title"
+    t.string "short_desc"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "room_messages", force: :cascade do |t|
     t.integer "room_id"
@@ -49,6 +57,16 @@ ActiveRecord::Schema.define(version: 2020_02_18_144406) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
+  end
+
+  create_table "viewings", force: :cascade do |t|
+    t.integer "rating"
+    t.integer "user_id"
+    t.integer "movie_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["movie_id"], name: "index_viewings_on_movie_id"
+    t.index ["user_id"], name: "index_viewings_on_user_id"
   end
 
 end

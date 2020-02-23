@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  movie_id: 1
+  poster_url: MyString
+  title: MyString
+  short_desc: MyString
+
+two:
+  movie_id: 1
+  poster_url: MyString
+  title: MyString
+  short_desc: MyString

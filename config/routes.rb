@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :viewings
+  resources :movies
  # devise_for :users
 
   #root controller: :rooms, action: :index
