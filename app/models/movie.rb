@@ -1,4 +1,3 @@
 class Movie < ApplicationRecord
-	has_many :viewings
-	has_many :users, through: :viewings
+	has_and_belongs_to_many :users
 end

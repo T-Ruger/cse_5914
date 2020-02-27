@@ -208,10 +208,20 @@
       		var i = 0;
       		//start new grid row
       		var gridRow = `<div class = "card-group">`
-      		
+          var row = 0;
+          var movie_info = [];
+          let movie_map =  new Map();
       		results.forEach(movie => {
+            let movie_indiv = new Map()
+            movie_indiv.set("movie_id", movie.id)
+            movie_indiv.set("title", movie.original_title)
+            movie_indiv.set("poster_path", movie.poster_path)
+            movie_indiv.set("short_desc", movie.overview)
+            movie_map.set("movie" + movie.id, movie_indiv)
       			//set number of cards per row
       			if(i<5){
+            var tagId = "movie" + movie.id
+            var idNum = row*5 + i
       			//HTML for movie card
       			const movieCard = `<div class="card" data-role="movie-card-template">
       												<div>
@@ -223,7 +233,7 @@
 																	<div class="btn-group-vertical dropup mt-auto">
 																			<button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Not Interested</button>
 																			<div class="dropdown-menu">
-																				<a class="dropdown-item" href="#">Already seen</a>
+																				<a class="dropdown-item seen" href="#" id="movie${movie.id}" remote="true">Already seen</a>
 																				<a class="dropdown-item" href="#">Don't want to watch</a>
 																			</div>
 																			<button type="button" class="btn btn-primary">Add To Watchlist</button>
@@ -244,11 +254,29 @@
       				//start new row
       				gridRow = `<div class = "card-group">`
       				i = 0
+              row++;
     				}
+            
       		})
+          $('.seen').bind("click", function() {
+              var curr = movie_map.get(event.target.id)
+              $.ajax({
+                url: "/create",
+                type: "get",
+                data: { 'id': curr.get("movie_id"),
+                        'title': curr.get("title"),
+                        'poster_path': curr.get("poster_path"),
+                        'short_desc': curr.get("short_desc")},
+                success: function() {
+                  console.log("hello")
+                }
+              })
+            })
+            
       		
     	}
     	request.send()
+      
   }
 
 
