@@ -228,12 +228,13 @@
       		var data = JSON.parse(this.response)
       		var results = data["results"]
       		var i = 0;
+      		var numColumns = 6
       		//start new grid row
       		var gridRow = `<div class = "card-group">`
       		
       		results.forEach(movie => {
       			//set number of cards per row
-      			if(i >= 5){
+      			if(i >= numColumns){
       				//close gridRow div
       				gridRow += `</div>`
       				
@@ -269,7 +270,7 @@
       		})
       		//append leftover cards
       		if(i > 0){
-      			while (i < 5) {
+      			while (i < numColumns) {
       				gridRow += `<div class="card"></div>`
       				i++
       			}
