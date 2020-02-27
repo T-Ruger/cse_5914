@@ -15,7 +15,7 @@
 </style>
 <div class = "row">
 	<div class = "col">
-		<div class="overflow-auto" style="height: 43%;" id="results-container">
+		<div class="overflow-auto" style="height: 85vh;" id="results-container">
 		</div>
 	</div>
 	
@@ -143,7 +143,8 @@
     cast(person) {
       var request = new XMLHttpRequest()
       var urlStr = BASE_PATH + '/search/person?api_key=' + api_key +'&language=en-US&query=' + encodeURI(person) + '&page=1&include_adult=false'
-      request.open('GET', urlStr, true)
+      request.open('GET', urlStr, false)
+      console.log(urlStr)
       return request
     }
 
@@ -177,14 +178,35 @@
       var request = new XMLHttpRequest()
       var urlStr = BASE_PATH + "/discover/movie?api_key=" + api_key + AMP + LANGUAGE + AMP + SORT_BY + AMP + INCLUDE_ADULT + AMP + PAGE_NUM
       for (let [key, value] of attributes) {
+      	
         if (key == 'with_genres') {
           value = GENRES.get(value.toLowerCase())
         }
         
-        //remove 'if' once people is implemented
-        if (key != 'with_people'){
-        	urlStr = urlStr + AMP + key + "=" + value
+        if (key == 'with_people'){
+        	var people = value
+        	var people_str = ""
+        	//iterate through each requested person
+        	people.forEach(person => {
+        		var personrequest = database.cast(person)
+        		personrequest.onload = function () {
+        			//get result, parse to get id
+        			var data = JSON.parse(this.response)
+        			var results = data["results"]
+        			var id = results[0]["id"]
+        			//append id to string, with comma if necessary
+        			if(people_str.length > 0){
+        				people_str+=","
+        			}
+        			people_str += id.toString()
+        		}
+        		personrequest.send()
+        	})
+        	value = people_str
         }
+        
+        //remove 'if' once people is implemented
+      	urlStr = urlStr + AMP + key + "=" + value
       }
       request.open('GET', urlStr, true)
       console.log(urlStr)
@@ -211,7 +233,17 @@
       		
       		results.forEach(movie => {
       			//set number of cards per row
-      			if(i<5){
+      			if(i >= 5){
+      				//close gridRow div
+      				gridRow += `</div>`
+      				
+      				//append row to resultsContainer 
+      				resultsContainer.innerHTML += gridRow
+      				
+      				//start new row
+      				gridRow = `<div class = "card-group">`
+      				i = 0
+      			}
       			//HTML for movie card
       			const movieCard = `<div class="card" data-role="movie-card-template">
       												<div>
@@ -234,23 +266,22 @@
 						//add card to row								
       			gridRow += movieCard
       			i++
-      			}else{
-      				//close gridRow div
-      				gridRow += `</div>`
-      				
-      				//append row to resultsContainer 
-      				resultsContainer.innerHTML += gridRow
-      				
-      				//start new row
-      				gridRow = `<div class = "card-group">`
-      				i = 0
-    				}
       		})
+      		//append leftover cards
+      		if(i > 0){
+      			while (i < 5) {
+      				gridRow += `<div class="card"></div>`
+      				i++
+      			}
+      			gridRow += '</div>'
+      			resultsContainer.innerHTML += gridRow
+      		}
       		
     	}
     	request.send()
   }
-
+  var m = new Map();
+	updateList(m)
 
   function createTableHead(table) {
     var header = document.createElement("thead")
