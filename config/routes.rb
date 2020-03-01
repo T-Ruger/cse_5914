@@ -17,4 +17,5 @@ Rails.application.routes.draw do
   get '/about', to: "static_page#about"
   get '/catalog', to: "static_page#movies"
   get '/search', to: "movie#show"
+  get '/preferences', to: "preferences#pref"
 end

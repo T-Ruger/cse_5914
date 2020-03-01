@@ -1,0 +1,88 @@
+
+  <h2>User Preferences</h2>
+
+<div class = "pref">
+	<p> Preferred Language:
+		<select class="mdb-select md-form">
+		  <option value="" disabled selected>Languages</option>
+		  <option value="en">English</option>
+		  <option value="sp">Spanish</option>
+		  <option value="fr">French</option>
+		</select>
+	</p>
+	<br>
+	<p> Include Adult Content:
+		<select class="mdb-select md-form">
+		  <option value="" disabled selected>Options</option>
+		  <option value="adult_yes">Yes</option>
+		  <option value="adult_no">No</option>
+		</select>
+	</p>
+</div>
+
+
+<div class = "pref">
+	<p> Earliest Movie Release Year </p>
+	<input type="range" min="1890" max="2020" value="2000" class="slider" id="year_slider">
+	<p>Year: <span id="year_input"></span></p>
+</div>
+
+<div class = "pref">
+	<p> Maximum Movie Length (minutes) </p>
+	<input type="range" min="0" max="400" value="100" class="slider" id="length_slider">
+	<p>Minutes: <span id="length_input"></span></p>
+</div>
+
+
+
+<button> Submit </button>
+
+<script>
+var year_slider = document.getElementById("year_slider");
+var year_output = document.getElementById("year_input");
+year_output.innerHTML = year_slider.value;
+
+var length_slider = document.getElementById("length_slider");
+var length_output = document.getElementById("length_input");
+length_output.innerHTML = length_slider.value;
+
+
+year_slider.oninput = function() {
+  year_output.innerHTML = this.value;
+} 
+
+length_slider.oninput = function() {
+  length_output.innerHTML = this.value;
+} 
+</script>
+
+
+<style>
+
+.pref {
+	padding: 50px;	
+}
+
+.slider {
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;  
+  background: #d3d3d3;
+}
+
+.slider::-webkit-slider-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%; 
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+</style>
