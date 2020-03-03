@@ -16,6 +16,12 @@ class RoomMessagesController < ApplicationController
                                        params: @room.params
 
    RoomChannel.broadcast_to @room, @room_message
+   
+   if @room.lastIntent == "already_seen" then
+   	puts "\n\n\n The message you just sent was a review: " + @room_message.message.to_s + "\n\n\n" #debugging
+   	#send @room_message to sentiment analysis
+   	#set rating for movie
+   end
 	 get_response
   end
 
@@ -157,6 +163,8 @@ class RoomMessagesController < ApplicationController
   		end
   		i+=1
   	end
+  	@room.lastIntent = intent
+  	@room.save
   		
   	#parse response text, write text response to chat
   	i = 0
@@ -201,6 +209,14 @@ class RoomMessagesController < ApplicationController
 				
 				response_text += "."
 				return "I recommend these movies."
+  end
+  
+  #get user's opinion on a movie that they've watched
+  def rate_movie
+  	review = @room_message.message
+  	#TODO perform sentiment analysis on review text
+  	#TODO update user's rating for movie based on sentiment
+  	
   end
   
   #get new session id for room if session is expired
