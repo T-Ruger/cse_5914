@@ -216,6 +216,7 @@
   }
   var database = new TMDB();
   function updateList(attributes) {
+        //alert(gon.user_movies)
       	//console.log(attributes)
         var request = database.multiSearch(attributes)
         request.onload = function () {
@@ -253,25 +254,50 @@
       				gridRow = `<div class = "card-group">`
       				i = 0
       			}
-      			//HTML for movie card
-      			const movieCard = `<div class="card" data-role="movie-card-template">
-      												<div>
-																<img class="card-img-top" src="${POSTER_PATH + movie.poster_path}" alt="Card image cap" data-role="card-poster" title="${movie.overview}">
-															</div>
-															<div class="card-body d-flex flex-column">
-																	<h5 class="card-title" data-role="card-title">${movie.original_title} (${movie.release_date.substring(0,4)})</h5>
-																	
-																	<div class="btn-group-vertical dropup mt-auto">
-																			<button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Hide</button>
-																			<div class="dropdown-menu">
-																				<a class="dropdown-item seen" href="#" id="movie${movie.id}" remote="true" onclick="alreadySeen(${movie.id})">Already seen</a>
-																				<a class="dropdown-item" href="#">Not Interested</a>
-																			</div>
-																			<button type="button" class="btn btn-primary">Add To Watchlist</button>
-																	</div>
-															</div>
-														</div>`;
-						
+
+            var count;
+            var watched = false;
+            for(count = 0; count < gon.user_movies.length; count++) {
+              if(gon.user_movies[count].movie_id == movie.id) {
+                watched = true;
+              }
+            }
+
+            //HTML for movie card
+            var movieCard;
+            if(watched) {
+              movieCard = `<div class="card" style="background-color: #000">
+                            <div>
+                              <img class="card-img-top" src="${POSTER_PATH + movie.poster_path}" alt="Card image cap" title="${movie.overview}">
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                              <h5 class="card-title" style="color: #EEE">${movie.original_title} (${movie.release_date.substring(0,4)})</h5>
+                                  
+                              <div class="btn-group-vertical dropup mt-auto">
+                                <button type="button" disabled class="btn btn-primary" style="background-color: #BBB; color:blue">Already on your Watchlist</button>
+                              </div>
+                            </div>
+                          </div>`;
+            } 
+            else {  
+              movieCard = `<div class="card">
+                            <div>
+                              <img class="card-img-top" src="${POSTER_PATH + movie.poster_path}" alt="Card image cap" title="${movie.overview}">
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                              <h5 class="card-title" data-role="card-title">${movie.original_title} (${movie.release_date.substring(0,4)})</h5>
+                                  
+                              <div class="btn-group-vertical dropup mt-auto">
+                                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Not Interested</button>
+                                <div class="dropdown-menu">
+                                  <a class="dropdown-item seen" href="#" id="movie${movie.id}" remote="true" onclick="alreadySeen(${movie.id})">Already seen</a>
+                                  <a class="dropdown-item" href="#">Don't want to watch</a>
+                                </div>
+                                <button type="button" class="btn btn-primary">Add To Watchlist</button>
+                              </div>
+                            </div>
+                          </div>`;
+            }
 														
 						//add card to row								
       			gridRow += movieCard
@@ -295,8 +321,7 @@
                 data: { 'id': curr.get("movie_id"),
                         'title': curr.get("title"),
                         'poster_path': curr.get("poster_path"),
-                        'short_desc': curr.get("short_desc")},
-                success: alreadySeen(curr.get("movie_id"))
+                        'short_desc': curr.get("short_desc")}
               })
             })
       		

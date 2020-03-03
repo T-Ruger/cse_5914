@@ -54,6 +54,7 @@ class RoomsController < ApplicationController
   def show
     @room_message = RoomMessage.new room: @room
     @room_messages = @room.room_messages.includes(:user)
+    gon.user_movies = current_user.movies
   end
 
   def edit
