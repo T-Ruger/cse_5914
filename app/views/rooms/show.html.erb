@@ -64,7 +64,7 @@
                                    autocomplete: 'off'
                                  } %>
         <div class="input-group-append">
-          <%= form.submit "Send", class: 'btn btn-primary chat-input' %>
+          <%= form.submit "Send", class: 'btn btn-primary chat-input', id: "submit" %>
         </div>
       </div>
 
@@ -296,9 +296,7 @@
                         'title': curr.get("title"),
                         'poster_path': curr.get("poster_path"),
                         'short_desc': curr.get("short_desc")},
-                success: function() {
-                  console.log("hello")
-                }
+                success: alreadySeen(curr.get("movie_id"))
               })
             })
       		
@@ -310,10 +308,8 @@
 	updateList(m)
 	
 	function alreadySeen(id) {
-		//alert(id)
 		document.getElementById("room_message_message").value = "I've already seen this movie."
-		//TODO click submit button
-		
+    document.getElementById("submit").click()	
 	}
 	
   function createTableHead(table) {
