@@ -1,0 +1,108 @@
+<style>
+	body {
+	  background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) ), url('netflix-image.jpeg');
+	  margin:0;
+	}
+	ul {
+		list-style-type: none;
+		margin: 0;
+/*		margin-left: 20px;
+		margin-right: 20px;*/
+		padding: 0;
+		overflow: hidden;
+		/*background-color: #333;*/
+		position: fixed;
+		top: 0;
+		width: 100%;
+	}
+
+	li {
+		float: left;
+	}
+
+	li a {
+		display: block;
+		color: #FBD308;
+		text-align: center;
+		padding: 20px 32px;
+		text-decoration: none;
+		font-family: Rockwell;
+  		font-size: 110%;
+	}
+
+	li a:hover:not(.active) {
+		background-color: #FBD308;
+		color: white;
+	}
+
+	.active {
+		/*background-color: #FBD308;*/
+		color: #FBD308;
+	}
+
+	.center {
+		margin: auto;
+		margin-top: 100px;
+		height: 550px;
+		width: 400px;
+		/*border: 3px solid #73AD21;*/
+		padding: 10px;
+		background: rgba(0,0,0,0.65);
+	}
+
+	input {
+		width: 70%;
+		margin-left: 60px;
+		margin-top: 30px;
+		box-sizing: border-box;
+		border: 2px solid #ccc;
+		border-radius: 4px;
+		color: white;
+		font-size: 16px;
+		background-color: black;
+		background-position: 10px 10px; 
+		background-repeat: no-repeat;
+		padding: 12px 20px 12px 10px;
+	}
+
+	.butt {
+		margin-left: 50px;
+		margin-right: 50px;
+		border-radius: 10px;
+	    border: 1px outset #FBD308;
+	    background-color: #FBD308;
+	    color: white;
+	    height:50px;
+	    width:300px;
+	    cursor:pointer;
+		font-family: Arial;
+  		font-size: 130%;
+	}
+
+	.butt:hover {
+		background-color: white;
+	    color:black;
+	}
+</style>
+
+<body>
+
+<ul>
+  <li style="font-size:300%; padding: 0px 40px"><a class="active" href="#home">MoR</a></li>
+  <li style="float:right"><a href="#1">Chat</a></li>
+  <li style="float:right"><a href="#2">Recently Watched</a></li>
+  <li style="float:right"><a href="#3">Movie Catalog</a></li>
+  <li style="float:right"><a href="#4">About</a></li>
+</ul>
+
+</body>
+
+<div class = "center">
+	<h1 style="margin-left: 50px; margin-top: 30px; font-family: Arial; color: white">Sign Up</h1>
+	<input type="text" name="email" placeholder="Email *">
+	<input type="text" name="username" placeholder="Username *">
+	<input type="password" name="password" placeholder="Password *">
+	<input type="password" name="password_confirmation" placeholder="Password Confirmation *">
+	<input class="butt" type="button" value="Sign Up"/>
+    <p style="margin-left: 50px;color: gray;font-family: Calibri; font-size: 90%">Already have an account?&nbsp;<a style="color: white" href="http://www.google.com">Sign in</a>.</p>
+</div>
