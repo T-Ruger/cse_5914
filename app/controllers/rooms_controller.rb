@@ -24,6 +24,7 @@ class RoomsController < ApplicationController
   	@room = Room.new
   	@room.creator = current_user.username
   	@room.params = "{}"
+  	@room.lastIntent = ""
   	
   	#watson session setup
   	

@@ -229,6 +229,7 @@
       		var data = JSON.parse(this.response)
       		var results = data["results"]
       		var i = 0;
+      		var numColumns = 6
       		//start new grid row
       		var gridRow = `<div class = "card-group">`
           var row = 0;
@@ -242,7 +243,7 @@
             movie_indiv.set("short_desc", movie.overview)
             movie_map.set("movie" + movie.id, movie_indiv)
       			//set number of cards per row
-      			if(i >= 5){
+      			if(i >= numColumns){
       				//close gridRow div
       				gridRow += `</div>`
       				
@@ -289,7 +290,7 @@
                               <div class="btn-group-vertical dropup mt-auto">
                                 <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Not Interested</button>
                                 <div class="dropdown-menu">
-                                  <a class="dropdown-item seen" href="#" id="movie${movie.id}" remote="true">Already seen</a>
+                                  <a class="dropdown-item seen" href="#" id="movie${movie.id}" remote="true" onclick="alreadySeen(${movie.id})">Already seen</a>
                                   <a class="dropdown-item" href="#">Don't want to watch</a>
                                 </div>
                                 <button type="button" class="btn btn-primary">Add To Watchlist</button>
@@ -297,10 +298,6 @@
                             </div>
                           </div>`;
             }
-
-      			
-
-           
 														
 						//add card to row								
       			gridRow += movieCard
@@ -309,7 +306,7 @@
       		})
       		//append leftover cards
       		if(i > 0){
-      			while (i < 5) {
+      			while (i < numColumns) {
       				gridRow += `<div class="card"></div>`
       				i++
       			}
@@ -337,7 +334,14 @@
   }
   var m = new Map();
 	updateList(m)
-
+	
+	function alreadySeen(id) {
+		//alert(id)
+		document.getElementById("room_message_message").value = "I've already seen this movie."
+		//TODO click submit button
+		
+	}
+	
   function createTableHead(table) {
     var header = document.createElement("thead")
     header.id = "resultsHeader"

@@ -16,7 +16,28 @@ class RoomMessagesController < ApplicationController
                                        params: @room.params
 
    RoomChannel.broadcast_to @room, @room_message
-	 get_response
+   
+   #check if user is currently reviewing a movie. If they are, send message to sentiment analysis and update rating
+   if @room.lastIntent == "already_seen" then
+   	puts "\n\n\n The message you just sent was a review: " + @room_message.message.to_s + "\n\n\n" #debugging
+   	#send @room_message to sentiment analysis
+   	#set rating for movie
+   	
+   	@watson_message = RoomMessage.create user:current_user,
+   																			 room: @room,
+   																			 watsonmsg: true,
+   																			 message: "Sounds like you really enjoyed it. I'll update your preferences.", #replace with message based on rating
+   																			 params: @room.params
+	  RoomChannel.broadcast_to @room, @watson_message
+	  
+	  #clear lastIntent
+	  @room.lastIntent = ""
+	  @room.save
+	  
+	 #otherwise, get response from watson 
+   else
+	 	get_response
+	 end
   end
 
   protected
@@ -59,7 +80,20 @@ class RoomMessagesController < ApplicationController
   	puts JSON.pretty_generate(response.result)
   	
   	#parse entities
-  	intent = response.result["output"]["intents"][0]["intent"]
+  	intents = response.result["output"]["intents"]
+  	intent = ""
+  	#check for irrelevant messages
+  	if intents[0] != nil then
+  		intent = intents[0]["intent"]
+		else
+  		@watson_message = RoomMessage.create user: current_user,
+		 																						room: @room,
+		 																						watsonmsg: true,
+		 																						message: "Sorry, I didn't understand that.",
+		 																						params: @room.params
+			RoomChannel.broadcast_to @room, @watson_message
+		end
+		
   	i = 0
   	found_entities = Hash.new
   	
@@ -80,13 +114,13 @@ class RoomMessagesController < ApplicationController
 				puts found_entities[entity]
 				case entity
 					when "genre"
-						if params_json["with_genres"] == nil || params_json["with_genres"] == "" || intent == "request_genre" then
+						if intent == "request_genre" then
 							params_json["with_genres"] = value.to_s
 						end
 						
 					when "sys-person"
 						#push to people array or create it
-						if params_json["with_people"] == nil || params_json["with_people"] == "" || intent == "request_person" then
+						if intent == "request_person" then
 							people = params_json["with_people"]
 							if people == nil || people == "" then
 								people = Array.new
@@ -99,39 +133,41 @@ class RoomMessagesController < ApplicationController
 						
 					when "time_period"
 						#set time period
-						case value.to_s
-							when "1900s"
-								params_json["primary_release_date.gte"] = "1900-01-01"
-								params_json["primary_release_date.lte"] = "1999-12-31"
-							when "2000s"
-								params_json["primary_release_date.gte"] = "2000-01-01"
-							when "2010s"
-								params_json["primary_release_date.gte"] = "2010-01-01"
-								params_json["primary_release_date.lte"] = "2019-12-31"
-							when "2020s"
-								params_json["primary_release_date.gte"] = "2020-01-01"
-								params_json["primary_release_date.lte"] = "2029-12-31"
-							when "30s"
-								params_json["primary_release_date.gte"] = "1930-01-01"
-								params_json["primary_release_date.lte"] = "1939-12-31"
-							when "40s"
-								params_json["primary_release_date.gte"] = "1940-01-01"
-								params_json["primary_release_date.lte"] = "1949-12-31"
-							when "50s"
-								params_json["primary_release_date.gte"] = "1950-01-01"
-								params_json["primary_release_date.lte"] = "1959-12-31"
-							when "60s"
-								params_json["primary_release_date.gte"] = "1960-01-01"
-								params_json["primary_release_date.lte"] = "1969-12-31"
-							when "70s"
-								params_json["primary_release_date.gte"] = "1970-01-01"
-								params_json["primary_release_date.lte"] = "1979-12-31"
-							when "80s"
-								params_json["primary_release_date.gte"] = "1980-01-01"
-								params_json["primary_release_date.lte"] = "1989-12-31"
-							when "90s"
-								params_json["primary_release_date.gte"] = "1990-01-01"
-								params_json["primary_release_date.lte"] = "1999-12-31"
+						if intent == "request_time_period" then
+							case value.to_s
+								when "1900s"
+									params_json["primary_release_date.gte"] = "1900-01-01"
+									params_json["primary_release_date.lte"] = "1999-12-31"
+								when "2000s"
+									params_json["primary_release_date.gte"] = "2000-01-01"
+								when "2010s"
+									params_json["primary_release_date.gte"] = "2010-01-01"
+									params_json["primary_release_date.lte"] = "2019-12-31"
+								when "2020s"
+									params_json["primary_release_date.gte"] = "2020-01-01"
+									params_json["primary_release_date.lte"] = "2029-12-31"
+								when "30s"
+									params_json["primary_release_date.gte"] = "1930-01-01"
+									params_json["primary_release_date.lte"] = "1939-12-31"
+								when "40s"
+									params_json["primary_release_date.gte"] = "1940-01-01"
+									params_json["primary_release_date.lte"] = "1949-12-31"
+								when "50s"
+									params_json["primary_release_date.gte"] = "1950-01-01"
+									params_json["primary_release_date.lte"] = "1959-12-31"
+								when "60s"
+									params_json["primary_release_date.gte"] = "1960-01-01"
+									params_json["primary_release_date.lte"] = "1969-12-31"
+								when "70s"
+									params_json["primary_release_date.gte"] = "1970-01-01"
+									params_json["primary_release_date.lte"] = "1979-12-31"
+								when "80s"
+									params_json["primary_release_date.gte"] = "1980-01-01"
+									params_json["primary_release_date.lte"] = "1989-12-31"
+								when "90s"
+									params_json["primary_release_date.gte"] = "1990-01-01"
+									params_json["primary_release_date.lte"] = "1999-12-31"
+							end
 						end
 					when "length"
 						
@@ -142,6 +178,8 @@ class RoomMessagesController < ApplicationController
   		end
   		i+=1
   	end
+  	@room.lastIntent = intent
+  	@room.save
   		
   	#parse response text, write text response to chat
   	i = 0
@@ -181,11 +219,19 @@ class RoomMessagesController < ApplicationController
 				response_text += "movie"
 				
 				if params_json["with_people"] != nil && params_json["with_people"] != "" then
-					response_text += " with " + params_json["with_people"]
+					response_text += " with " + params_json["with_people"].to_s
 				end
 				
 				response_text += "."
 				return "I recommend these movies."
+  end
+  
+  #get user's opinion on a movie that they've watched
+  def rate_movie
+  	review = @room_message.message
+  	#TODO perform sentiment analysis on review text
+  	#TODO update user's rating for movie based on sentiment
+  	
   end
   
   #get new session id for room if session is expired

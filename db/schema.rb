@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_27_211234) do
+ActiveRecord::Schema.define(version: 2020_03_03_211924) do
 
   create_table "movies", primary_key: "movie_id", force: :cascade do |t|
     t.string "poster_url"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 2020_02_27_211234) do
     t.string "serviceurl"
     t.string "creator"
     t.string "params"
+    t.string "lastIntent"
     t.index ["name"], name: "index_rooms_on_name", unique: true
   end
 
