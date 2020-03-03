@@ -17,12 +17,27 @@ class RoomMessagesController < ApplicationController
 
    RoomChannel.broadcast_to @room, @room_message
    
+   #check if user is currently reviewing a movie. If they are, send message to sentiment analysis and update rating
    if @room.lastIntent == "already_seen" then
    	puts "\n\n\n The message you just sent was a review: " + @room_message.message.to_s + "\n\n\n" #debugging
    	#send @room_message to sentiment analysis
    	#set rating for movie
-   end
-	 get_response
+   	
+   	@watson_message = RoomMessage.create user:current_user,
+   																			 room: @room,
+   																			 watsonmsg: true,
+   																			 message: "Sounds like you really enjoyed it. I'll update your preferences.", #replace with message based on rating
+   																			 params: @room.params
+	  RoomChannel.broadcast_to @room, @watson_message
+	  
+	  #clear lastIntent
+	  @room.lastIntent = ""
+	  @room.save
+	  
+	 #otherwise, get response from watson 
+   else
+	 	get_response
+	 end
   end
 
   protected
