@@ -20,5 +20,6 @@ Rails.application.routes.draw do
   get '/catalog', to: "static_page#movies"
   get '/search', to: "movie#show"
   get '/create', to: "movies#create"
+  get '/create_watch', to: "movies#create_watch"
   get '/viewingscreate', to: "viewings#create"
 end

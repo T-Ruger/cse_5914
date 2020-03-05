@@ -1,3 +1,6 @@
 class Movie < ApplicationRecord
-	has_and_belongs_to_many :users
+	has_many :viewings
+	has_many :watched_movies
+	has_many :seen_users, :class_name => 'User', :through => :viewings
+	has_many :watch_users, :class_name => 'User', :through => :watched_movies
 end

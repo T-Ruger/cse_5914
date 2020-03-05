@@ -3,7 +3,8 @@ class MoviesController < ApplicationController
   # GET /movies
   # GET /movies.json
   def index
-    @movies = current_user.movies
+    @movies = current_user.seen_movies
+    @movies_watch = current_user.watch_movies
   end
   # POST /movies
   # POST /movies.json
@@ -23,10 +24,31 @@ class MoviesController < ApplicationController
     else
       movie = movies.first
     end
-    if (!current_user.movies.include?(movie))
-      current_user.movies << movie
+    if (!current_user.seen_movies.include?(movie))
+      current_user.seen_movies << movie
     end
 
+  end
+
+  def create_watch
+    id = params["id"].to_i
+    movies = Movie.where(movie_id: id)
+    if movies.empty?
+      movie = Movie.new
+      movie.movie_id = id
+      movie.title = params["title"]
+      movie.poster_url = params['poster_path']
+      movie.short_desc = params['short_desc']
+      puts movie
+      if movie.save
+        puts "yes"
+      end
+    else
+      movie = movies.first
+    end
+    if (!current_user.watch_movies.include?(movie))
+      current_user.watch_movies << movie
+    end
   end
 
   # PATCH/PUT /movies/1
@@ -46,8 +68,11 @@ class MoviesController < ApplicationController
   # DELETE /movies/1
   # DELETE /movies/1.json
   def destroy
+    puts params
     @movie = Movie.find(params["id"])
-    current_user.movies.delete(@movie)
+    
+    current_user.seen_movies.delete(@movie)
+    current_user.watch_movies.delete(@movie)
     redirect_to '/movies'
   end
 

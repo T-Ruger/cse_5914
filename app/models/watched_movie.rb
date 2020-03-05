@@ -1,4 +1,4 @@
-class Viewing < ApplicationRecord
+class WatchedMovie < ApplicationRecord
 	belongs_to :user
 	belongs_to :movie
 end

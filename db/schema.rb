@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_03_211924) do
+ActiveRecord::Schema.define(version: 2020_03_05_041002) do
 
   create_table "movies", primary_key: "movie_id", force: :cascade do |t|
     t.string "poster_url"
@@ -66,12 +66,17 @@ ActiveRecord::Schema.define(version: 2020_03_03_211924) do
   end
 
   create_table "viewings", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "movie_id"
+    t.string "movie_id"
+    t.string "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["movie_id"], name: "index_viewings_on_movie_id"
-    t.index ["user_id"], name: "index_viewings_on_user_id"
+  end
+
+  create_table "watched_movies", force: :cascade do |t|
+    t.string "user_id"
+    t.string "movie_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

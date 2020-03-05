@@ -289,7 +289,7 @@
                                   
                               <div class="btn-group-vertical dropup mt-auto">
                                 <button type="button" class="btn btn-warning seen"  id="movie${movie.id}" remote="true" onclick="alreadySeen(${movie.id})">Already seen</button>
-                                <button type="button" class="btn btn-primary">Add To Watchlist</button>
+                                <button type="button" class="btn btn-primary watch" id="movie${movie.id}" remote="true">Add To Watchlist</button>
                               </div>
                             </div>
                           </div>`;
@@ -313,6 +313,17 @@
               var curr = movie_map.get(event.target.id)
               $.ajax({
                 url: "/create",
+                type: "get",
+                data: { 'id': curr.get("movie_id"),
+                        'title': curr.get("title"),
+                        'poster_path': curr.get("poster_path"),
+                        'short_desc': curr.get("short_desc")}
+              })
+            })
+          $('.watch').bind("click", function() {
+              var curr = movie_map.get(event.target.id)
+              $.ajax({
+                url: "/create_watch",
                 type: "get",
                 data: { 'id': curr.get("movie_id"),
                         'title': curr.get("title"),
