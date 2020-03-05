@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_18_144406) do
+ActiveRecord::Schema.define(version: 2020_03_05_041002) do
+
+  create_table "movies", primary_key: "movie_id", force: :cascade do |t|
+    t.string "poster_url"
+    t.string "title"
+    t.string "short_desc"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "movies_users", id: false, force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "movie_id", null: false
+  end
 
   create_table "room_messages", force: :cascade do |t|
     t.integer "room_id"
@@ -34,6 +47,7 @@ ActiveRecord::Schema.define(version: 2020_02_18_144406) do
     t.string "serviceurl"
     t.string "creator"
     t.string "params"
+    t.string "lastIntent"
     t.index ["name"], name: "index_rooms_on_name", unique: true
   end
 
@@ -49,6 +63,20 @@ ActiveRecord::Schema.define(version: 2020_02_18_144406) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
+  end
+
+  create_table "viewings", force: :cascade do |t|
+    t.string "movie_id"
+    t.string "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "watched_movies", force: :cascade do |t|
+    t.string "user_id"
+    t.string "movie_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

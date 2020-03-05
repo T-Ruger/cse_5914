@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :viewings
+  resources :movies
  # devise_for :users
 
   #root controller: :rooms, action: :index
@@ -18,4 +20,7 @@ Rails.application.routes.draw do
   get '/catalog', to: "static_page#movies"
   get '/search', to: "movie#show"
   get '/preferences', to: "preferences#pref"
+  get '/create', to: "movies#create"
+  get '/create_watch', to: "movies#create_watch"
+  get '/viewingscreate', to: "viewings#create"
 end
