@@ -55,7 +55,7 @@ class RoomsController < ApplicationController
     @room_message = RoomMessage.new room: @room
     @room_messages = @room.room_messages.includes(:user)
     gon.user_movies = current_user.seen_movies
-    gon.user_movies << current_user.watch_movies
+    gon.user_watch_movies = current_user.watch_movies
   end
 
   def edit
