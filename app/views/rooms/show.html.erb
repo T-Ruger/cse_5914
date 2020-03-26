@@ -288,7 +288,7 @@
                               <h5 class="card-title" data-role="card-title">${movie.original_title} (${movie.release_date.substring(0,4)})</h5>
                                   
                               <div class="btn-group-vertical dropup mt-auto">
-                                <button type="button" class="btn btn-warning seen"  id="movie${movie.id}" remote="true" onclick="alreadySeen(${movie.id})">Already seen</button>
+                                <button type="button" class="btn btn-warning seen"  id="movie${movie.id}" remote="true" onclick="alreadySeen(${movie.id}, '${movie.original_title}')">Already seen</button>
                                 <button type="button" class="btn btn-primary watch" id="movie${movie.id}" remote="true">Add To Watchlist</button>
                               </div>
                             </div>
@@ -339,8 +339,8 @@
   var m = new Map();
 	updateList(m)
 	
-	function alreadySeen(id) {
-		document.getElementById("room_message_message").value = "I've already seen this movie."
+	function alreadySeen(id, title) {
+		document.getElementById("room_message_message").value = "I've already seen " + title + "."
     document.getElementById("submit").click()	
 	}
 	

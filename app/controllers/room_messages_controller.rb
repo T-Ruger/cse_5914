@@ -1,6 +1,8 @@
 require "json"
 require "ibm_watson/authenticators"
 require "ibm_watson/assistant_v2"
+require "ibm_watson/tone_analyzer_v3"
+require "ibm_watson/natural_language_understanding_v1"
 include IBMWatson
 
 class RoomMessagesController < ApplicationController
@@ -22,13 +24,7 @@ class RoomMessagesController < ApplicationController
    	puts "\n\n\n The message you just sent was a review: " + @room_message.message.to_s + "\n\n\n" #debugging
    	#send @room_message to sentiment analysis
    	#set rating for movie
-   	
-   	@watson_message = RoomMessage.create user:current_user,
-   																			 room: @room,
-   																			 watsonmsg: true,
-   																			 message: "Sounds like you really enjoyed it. I'll update your preferences.", #replace with message based on rating
-   																			 params: @room.params
-	  RoomChannel.broadcast_to @room, @watson_message
+   	rate_movie
 	  
 	  #clear lastIntent
 	  @room.lastIntent = ""
@@ -230,8 +226,59 @@ class RoomMessagesController < ApplicationController
   def rate_movie
   	review = @room_message.message
   	#TODO perform sentiment analysis on review text
+		authenticator = Authenticators::IamAuthenticator.new(
+			apikey: "ZnDzX8FfmZu92lPaf_ut1kmzir3S66geHAgYheIQvSkH"
+		)
+		
+		natural_language_understanding = NaturalLanguageUnderstandingV1.new(
+			version: "2019-07-12",
+			authenticator: authenticator
+		)
+
+		natural_language_understanding.service_url = "https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/b63a4323-b4d7-412e-8c11-263319d1b818"
+
+		response = natural_language_understanding.analyze(
+			text: review,
+			features: {
+				emotion: {
+				  emotion: true,
+				  sentiment: true,
+				}
+			}
+		)
+
+		#calculate rating
+		emotions = response.result["emotion"]["document"]["emotion"]
+		puts JSON.pretty_generate(emotions)
+		
+		positive = emotions["joy"] * 1.25
+		negative = emotions["sadness"] + emotions["disgust"] + emotions["anger"]
+		total = positive + negative
+		rating = (positive * 10 / total).round(1)
+		
   	#TODO update user's rating for movie based on sentiment
   	
+  	#set response message
+  	response_msg = ""
+  	if(rating >= 8)
+  		response_msg = "Sounds like you really loved the movie! "
+  	elsif(rating >= 6)
+  		response_msg = "Sounds like you enjoyed the movie! "
+  	elsif(rating >= 4)
+  		response_msg = "Sounds like you didn't like the movie that much. "
+  	elsif(rating >= 2)
+  		response_msg = "Sounds like you disliked this movie quite a bit. "
+  	else
+  		response_msg = "Sounds like you really disliked this movie. "
+  	end
+  	
+  	#send response message
+  	@watson_message = RoomMessage.create user:current_user,
+   																			 room: @room,
+   																			 watsonmsg: true,
+   																			 message: response_msg + " (" + rating.to_s + "/10). I'll use this for future recommendations.", #replace with message based on rating
+   																			 params: @room.params
+	  RoomChannel.broadcast_to @room, @watson_message
   end
   
   #get new session id for room if session is expired
@@ -242,7 +289,7 @@ class RoomMessagesController < ApplicationController
 	 																						message: "The session has expired. Starting a new chat.",
 	 																						params: @room.params
 		RoomChannel.broadcast_to @room, @watson_message
-		
+
 		authenticator = Authenticators::IamAuthenticator.new(
 			apikey: @room.apikey
 		)
@@ -264,4 +311,5 @@ class RoomMessagesController < ApplicationController
 																					params: @room.params
 		RoomChannel.broadcast_to @room, @welcome_message
   end
+  
 end
