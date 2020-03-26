@@ -1,23 +1,40 @@
 
   <h2>User Preferences</h2>
 
+
 <div class = "pref">
-	<p> Preferred Language:
-		<select class="mdb-select md-form">
-		  <option value="" disabled selected>Languages</option>
-		  <option value="en">English</option>
-		  <option value="sp">Spanish</option>
-		  <option value="fr">French</option>
-		</select>
-	</p>
-	<br>
-	<p> Include Adult Content:
-		<select class="mdb-select md-form">
-		  <option value="" disabled selected>Options</option>
-		  <option value="adult_yes">Yes</option>
-		  <option value="adult_no">No</option>
-		</select>
-	</p>
+	<div class = "column">
+		<p> Preferred Language:
+			<select class="mdb-select md-form">
+			  <option value="en">English</option>
+			  <option value="sp">Spanish</option>
+			  <option value="fr">French</option>
+			</select>
+
+		</p>
+	</div>
+
+	<div class = "column">
+		<p> Include Adult Content:
+			<select class="mdb-select md-form">
+			  <option value="adult_no">No</option>
+			  <option value="adult_yes">Yes</option>
+			</select>
+		</p>
+	</div>
+
+	<div class = "column">
+		<p> Sort Results By:
+			<select class="mdb-select md-form">
+			  <option value="pop_desc">Descending Popularity</option>
+			  <option value="pop_asc">Ascending Popularity</option>
+			  <option value="date_desc">Descending Release Date</option>
+			  <option value="date_asc">Ascending Release Date</option>
+			  <option value="rev_desc">Descending Revenue</option>
+			  <option value="rev_asc">Ascending Revenue</option>
+			</select>
+		</p>
+	</div>
 </div>
 
 
@@ -35,7 +52,7 @@
 
 
 
-<button> Submit </button>
+<button class = "button"> Submit </button>
 
 <script>
 var year_slider = document.getElementById("year_slider");
@@ -59,8 +76,13 @@ length_slider.oninput = function() {
 
 <style>
 
+.column {
+	float: left;
+	width: 33.33%
+}
+
 .pref {
-	padding: 50px;	
+	padding : 50px;
 }
 
 .slider {
@@ -84,5 +106,14 @@ length_slider.oninput = function() {
   border-radius: 50%;
   background: #4CAF50;
   cursor: pointer;
+}
+
+.button {
+	padding: 4px;
+	font-size: 20px;
+	border-radius : 10px;
+	width: 100%;
+	color: white;
+	background-color: #4CAF50;
 }
 </style>
