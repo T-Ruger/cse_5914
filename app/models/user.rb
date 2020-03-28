@@ -10,6 +10,7 @@ class User < ApplicationRecord
            dependent: :destroy
   has_many :viewings
   has_many :watched_movies
+  has_one :movie
   has_many :seen_movies, :class_name => 'Movie', :through => :viewings, :source => :movie
   has_many :watch_movies, :class_name => 'Movie', :through => :watched_movies, :source => :movie
   def gravatar_url

@@ -27,6 +27,8 @@ class MoviesController < ApplicationController
     if (!current_user.seen_movies.include?(movie))
       current_user.seen_movies << movie
     end
+    current_user.movie_id = movie.id
+    current_user.save
 
   end
 
