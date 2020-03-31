@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   root to: "static_page#home"
   
   get '/home', to: "static_page#home"
+  get '/suggestions', to: "static_page#suggestions"
   get '/movies', to: "static_page#movies"
   get '/about', to: "static_page#about"
   get '/catalog', to: "static_page#movies"

@@ -1,0 +1,16 @@
+<table>
+	<thead>
+		<th>Title</th>
+		<th>Poster</th>
+		<th>Description</th>
+	</thead>
+	<tbody>
+		<% @results.each do |current| %>
+			<tr>
+				<td><%=current['title']%></td>
+				<td><%=image_tag "https://image.tmdb.org/t/p/w154" + current['poster_path']%></td>
+				<td><%=current['overview']%></td>
+			</tr>
+		<%end%>
+	</tbody>
+</table>
