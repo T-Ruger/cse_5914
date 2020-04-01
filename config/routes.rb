@@ -13,6 +13,8 @@ Rails.application.routes.draw do
   end
   
   root to: "static_page#home"
+
+  get '/resetHome', to: "static_page#setNil"
   
   get '/home', to: "static_page#home"
   get '/suggestions', to: "static_page#suggestions"

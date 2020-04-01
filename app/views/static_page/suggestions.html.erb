@@ -1,16 +1,57 @@
-<table>
-	<thead>
-		<th>Title</th>
-		<th>Poster</th>
-		<th>Description</th>
-	</thead>
-	<tbody>
-		<% @results.each do |current| %>
-			<tr>
-				<td><%=current['title']%></td>
-				<td><%=image_tag "https://image.tmdb.org/t/p/w154" + current['poster_path']%></td>
-				<td><%=current['overview']%></td>
-			</tr>
-		<%end%>
-	</tbody>
-</table>
+<style>
+	.my-custom-scrollbar {
+		position: relative;
+		height: 500px;
+		overflow: auto;
+	}	
+	.table-wrapper-scroll-y {
+		display: block;
+	}
+</style>
+<h1>Because you watched <%= @last_movie.title%>...</h1>
+<div class="table-wrapper-scroll-y my-custom-scrollbar">
+	<table class="table table-bordered">
+		<thead>
+			<th scope="col">Title</th>
+			<th scope="col">Poster</th>
+			<th scope="col">Description</th>
+			<th scope="col">Rating</th>
+		</thead>
+		<tbody>
+			<% @results.each do |current| %>
+				<tr>
+					<td><%=current['title']%></td>
+					<td><%=image_tag "https://image.tmdb.org/t/p/w154" + current['poster_path']%></td>
+					<td><%=current['overview']%></td>
+					<td><%=select_tag current['id'].to_s, options_for_select([["Choose a rating", "default"], ["I liked it!", "like"],["It was okay.", "eh"], ["I really disliked it.", "dislike"]]), :name => "rating"%></td>
+				</tr>
+			<%end%>
+		</tbody>
+	</table>
+</div>
+<div>
+	<a href="/resetHome"type="button" class = "btn btn-secondary">No thanks!</a>
+	<button type="button" onclick="saveRatings()" class = "btn btn-primary">Save Ratings</button>
+</div>
+<script>
+	function saveRatings() {
+		var ratings = document.getElementsByName("rating")
+		ratings.forEach(function(selection) {
+			var rating = selection.options[selection.selectedIndex].value
+			switch(rating) {
+				case "like":
+					alert("like")
+					break;
+				case "eh":
+					alert("eh")
+					break;
+				case "dislike":
+					alert("dislike")
+					break;
+				default:
+					break;
+			}
+
+		})
+	}
+</script>

@@ -2,7 +2,6 @@ require 'net/http'
 require 'json'
 class StaticPageController < ApplicationController
 	def home
-		puts current_user.movie_id
 		if current_user.movie_id != nil
 			redirect_to "/suggestions" 
 		end
@@ -13,5 +12,12 @@ class StaticPageController < ApplicationController
 		response = Net::HTTP.get(uri)
 		jsonStr = JSON.parse(response)
 		@results =  jsonStr['results']
+		@last_movie = Movie.find current_user.movie_id
+		puts @last_movie
+	end
+	def setNil
+		current_user.movie_id = nil
+		current_user.save
+		redirect_to "/home"
 	end
 end
