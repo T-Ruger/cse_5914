@@ -26,4 +26,5 @@ Rails.application.routes.draw do
   get '/create', to: "movies#create"
   get '/create_watch', to: "movies#create_watch"
   get '/viewingscreate', to: "viewings#create"
+  get '/updateRatings', to: "static_page#updateRatings"
 end

@@ -36,22 +36,36 @@
 <script>
 	function saveRatings() {
 		var ratings = document.getElementsByName("rating")
+		var newRatings = new Map()
 		ratings.forEach(function(selection) {
 			var rating = selection.options[selection.selectedIndex].value
 			switch(rating) {
 				case "like":
-					alert("like")
+					$.ajax({
+						url: "/updateRatings",
+						type: "get",
+						data: {'id': selection.id, 'rating': "like"}
+					})
 					break;
 				case "eh":
-					alert("eh")
+					$.ajax({
+						url: "/updateRatings",
+						type: "get",
+						data: {'id': selection.id, 'rating': "eh"}
+					})
 					break;
 				case "dislike":
-					alert("dislike")
+					$.ajax({
+						url: "/updateRatings",
+						type: "get",
+						data: {'id': selection.id, 'rating': "dislike"}
+					})
 					break;
 				default:
 					break;
 			}
 
 		})
+		window.location.href="/resetHome"
 	}
 </script>
