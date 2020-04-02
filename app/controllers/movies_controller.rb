@@ -5,6 +5,22 @@ class MoviesController < ApplicationController
   def index
     @movies = current_user.seen_movies
     @movies_watch = current_user.watch_movies
+    @liked_movies = []
+    @disliked_movies = []
+    @okay_movies = []
+    viewings = Viewing.where(user_id: current_user.id, rating: "like")
+    viewings.each do |viewing|
+      @liked_movies << Movie.find(viewing.movie_id)
+
+    end
+    viewings = Viewing.where(user_id: current_user.id, rating: "dislike")
+    viewings.each do |viewing|
+      @disliked_movies << Movie.find(viewing.movie_id)
+    end
+    viewings = Viewing.where(user_id: current_user.id, rating: "eh")
+    viewings.each do |viewing|
+      @okay_movies << Movie.find(viewing.movie_id)
+    end
   end
   # POST /movies
   # POST /movies.json

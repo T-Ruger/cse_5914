@@ -56,4 +56,76 @@
     </tbody>
   </table>
 </div>
+<h1>Movies You Liked</h1>
+<div class="table-wrapper-scroll-y my-custom-scrollbar">
+    <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Poster</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @liked_movies.each do |movie| %>
+        <tr>
+          <td><%= image_tag("https://image.tmdb.org/t/p/w154" + movie.poster_url, :alt => movie.title) %></td>
+          <td><%= movie.title %></td>
+          <td><%= movie.short_desc %></td>
+          <td><%=button_to "Remove", movie_path(movie), :class => 'btn btn-primary', :method => :delete, :data => {confirm: 'Are you sure?'}, :movie_type => "seen"%></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<h1>Movies You Thought Were Okay</h1>
+<div class="table-wrapper-scroll-y my-custom-scrollbar">
+    <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Poster</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @okay_movies.each do |movie| %>
+        <tr>
+          <td><%= image_tag("https://image.tmdb.org/t/p/w154" + movie.poster_url, :alt => movie.title) %></td>
+          <td><%= movie.title %></td>
+          <td><%= movie.short_desc %></td>
+          <td><%=button_to "Remove", movie_path(movie), :class => 'btn btn-primary', :method => :delete, :data => {confirm: 'Are you sure?'}, :movie_type => "seen"%></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<h1>Movies You Disliked</h1>
+<div class="table-wrapper-scroll-y my-custom-scrollbar">
+    <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Poster</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @disliked_movies.each do |movie| %>
+        <tr>
+          <td><%= image_tag("https://image.tmdb.org/t/p/w154" + movie.poster_url, :alt => movie.title) %></td>
+          <td><%= movie.title %></td>
+          <td><%= movie.short_desc %></td>
+          <td><%=button_to "Remove", movie_path(movie), :class => 'btn btn-primary', :method => :delete, :data => {confirm: 'Are you sure?'}, :movie_type => "seen"%></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
 
