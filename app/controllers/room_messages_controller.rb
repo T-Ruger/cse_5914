@@ -165,15 +165,42 @@ class RoomMessagesController < ApplicationController
 									params_json["primary_release_date.lte"] = "1999-12-31"
 							end
 						end
-					when "length"
-						
-				end
-				#replace "=>" with ":" because javascript is dumb
-				@room.params = params_json.to_s.gsub("=>", ":")
-				@room.save
+					#before/after date	
+					when "sys-date"
+						case intent
+							when "request_before_year"
+								params_json["primary_release_date.lte"] = value.to_s
+							when
+								params_json["primary_release_date.gte"] = value.to_s
+						end	
+					end
   		end
   		i+=1
   	end
+  	
+  	#check for sort_by
+		case intent
+			when "sort_popularity_desc"
+				params_json["sort_by"] = "popularity.desc"
+			when "sort_popularity_asc"
+				params_json["sort_by"] = "popularity.asc"
+			when "sort_release_desc"
+				params_json["sort_by"] = "release_date.desc"
+			when "sort_release_asc"
+				params_json["sort_by"] = "release_date.asc"
+			when "sort_rating_desc"
+				params_json["sort_by"] = "vote_average.desc"
+			when "sort_rating_asc"
+				params_json["sort_by"] = "vote_average.asc"
+			when "sort_revenue_desc"
+				params_json["sort_by"] = "revenue.desc"
+			when "sort_revenue_asc"
+				params_json["sort_by"] = "revenue.asc"
+		end
+		#replace "=>" with ":" because javascript is dumb
+		@room.params = params_json.to_s.gsub("=>", ":")
+		@room.save
+		
   	@room.lastIntent = intent
   	@room.save
   		
@@ -265,9 +292,9 @@ class RoomMessagesController < ApplicationController
   	elsif(rating >= 6)
   		response_msg = "Sounds like you enjoyed the movie! "
   	elsif(rating >= 4)
-  		response_msg = "Sounds like you didn't like the movie that much. "
+  		response_msg = "Sounds like you were neutral on this movie. "
   	elsif(rating >= 2)
-  		response_msg = "Sounds like you disliked this movie quite a bit. "
+  		response_msg = "Sounds like you disliked this movie. "
   	else
   		response_msg = "Sounds like you really disliked this movie. "
   	end
@@ -311,5 +338,4 @@ class RoomMessagesController < ApplicationController
 																					params: @room.params
 		RoomChannel.broadcast_to @room, @welcome_message
   end
-  
 end
