@@ -287,17 +287,24 @@ class RoomMessagesController < ApplicationController
   	
   	#set response message
   	response_msg = ""
+  	rating_data = ""
   	if(rating >= 8)
   		response_msg = "Sounds like you really loved the movie! "
+  		rating_data = "like"
   	elsif(rating >= 6)
   		response_msg = "Sounds like you enjoyed the movie! "
+  		rating_data = "like"
   	elsif(rating >= 4)
   		response_msg = "Sounds like you were neutral on this movie. "
+  		rating_data = "eh"
   	elsif(rating >= 2)
   		response_msg = "Sounds like you disliked this movie. "
+  		rating_data = "dislike"
   	else
   		response_msg = "Sounds like you really disliked this movie. "
+  		rating_data = "dislike"
   	end
+  	
   	
   	#send response message
   	@watson_message = RoomMessage.create user:current_user,
@@ -305,7 +312,16 @@ class RoomMessagesController < ApplicationController
    																			 watsonmsg: true,
    																			 message: response_msg + " (" + rating.to_s + "/10). I'll use this for future recommendations.", #replace with message based on rating
    																			 params: @room.params
-	  RoomChannel.broadcast_to @room, @watson_message
+	RoomChannel.broadcast_to @room, @watson_message
+	url = 'https://api.themoviedb.org/3/movie/'+ current_user.movie_id.to_s + '?api_key=305ae312343163e9a891637b00d624c9&language=en-US'
+	uri = URI(url)
+	response = Net::HTTP.get(uri)
+	jsonStr = JSON.parse(response)
+    movies = Movie.where(movie_id: current_user.movie_id)
+    movie = movies.first
+    viewings = Viewing.where(user_id: current_user.id, movie_id: current_user.movie_id)
+    viewings.first.rating = rating_data
+    viewings.first.save
   end
   
   #get new session id for room if session is expired
