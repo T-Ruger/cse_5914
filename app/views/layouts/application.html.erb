@@ -4,11 +4,59 @@
 		html, body {
 			height: 100vh;
 			margin: 0;
+      background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) ), url('/assets/netflix-image.jpeg');
 		}
 		.container-fluid {
     	height: 90vh;
     	 /* don't show content that exceeds my height */
 		}
+
+    .register-form {
+      text-align: left;
+      width: 33%;
+      margin-left: 33%;
+      margin-right: 33%;
+      padding-left: 10px;
+      padding-top: 10px;
+      padding-right: 10px;
+      padding-bottom: 10px;      
+      box-sizing: border-box;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      color: white;
+      font-size: 16px;
+      background-color: black;
+      background-position: 10px 10px; 
+      background-repeat: no-repeat;
+    }
+
+    .register-button {
+      height:50px;
+      width: 40%;
+      margin-left: 30%;
+      margin-right: 30%;
+      border-radius: 10px;
+      border: 1px outset #FBD308;
+      background-color: #FBD308;
+      color: white;
+      cursor:pointer;
+      font-family: Arial;
+      font-size: 130%;
+  }
+
+  .register-button:hover {
+    background-color: white;
+    color:black;
+  }
+
+  .register-button a {
+    padding: 5px;
+    display: block;
+    color: white;
+    text-align: center;
+
+  }
+
 	</style>
 
   <head>
@@ -28,8 +76,7 @@
   <%= render partial: 'shared/navigation_bar' %>
     <div div class="container-fluid">
       <div class="row">
-        <div class="col-12">
-          
+        <div class="col-12">   
           <div class="my-3">
             <%= yield %>
           </div>
