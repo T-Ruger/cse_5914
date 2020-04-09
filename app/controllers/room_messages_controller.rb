@@ -178,7 +178,7 @@ class RoomMessagesController < ApplicationController
   		i+=1
   	end
   	
-  	#check for sort_by
+  	#check for intents without entities
 		case intent
 			when "sort_popularity_desc"
 				params_json["sort_by"] = "popularity.desc"
@@ -196,6 +196,14 @@ class RoomMessagesController < ApplicationController
 				params_json["sort_by"] = "revenue.desc"
 			when "sort_revenue_asc"
 				params_json["sort_by"] = "revenue.asc"
+			when "request_next_page"
+				page = params_json["page"].to_i
+				if page == 0 then page = 1 end
+				params_json["page"] = (page + 1).to_s
+			when "clear_params"
+				params_json = "{}"
+			else
+				
 		end
 		#replace "=>" with ":" because javascript is dumb
 		@room.params = params_json.to_s.gsub("=>", ":")
