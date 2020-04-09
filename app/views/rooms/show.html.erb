@@ -271,7 +271,7 @@
                               <img class="card-img-top" src="${POSTER_PATH + movie.poster_path}" alt="Card image cap" title="${movie.overview}">
                             </div>
                             <div class="card-body d-flex flex-column">
-                              <h5 class="card-title" style="color: #EEE">${movie.original_title} (${movie.release_date.substring(0,4)})</h5>
+                              <h5 class="card-title text-white">${movie.original_title} (${movie.release_date.substring(0,4)})</h5>
                                   
                               <div class="btn-group-vertical dropup mt-auto">
                                 <button type="button" disabled class="btn btn-primary" style="background-color: #BBB; color:blue">Already on your Watchlist</button>
@@ -285,7 +285,7 @@
                               <img class="card-img-top" src="${POSTER_PATH + movie.poster_path}" alt="Card image cap" title="${movie.overview}">
                             </div>
                             <div class="card-body d-flex flex-column">
-                              <h5 class="card-title" data-role="card-title">${movie.original_title} (${movie.release_date.substring(0,4)})</h5>
+                              <h5 class="card-title text-dark" data-role="card-title">${movie.original_title} (${movie.release_date.substring(0,4)})</h5>
                                   
                               <div class="btn-group-vertical dropup mt-auto">
                                 <button type="button" class="btn btn-warning seen"  id="movie${movie.id}" remote="true" onclick="alreadySeen(${movie.id}, '${movie.original_title}')">Already seen</button>
