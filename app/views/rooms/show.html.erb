@@ -176,7 +176,34 @@
 
     multiSearch(attributes) {
       var request = new XMLHttpRequest()
-      var urlStr = BASE_PATH + "/discover/movie?api_key=" + api_key + AMP + LANGUAGE + AMP + SORT_BY + AMP + INCLUDE_ADULT + AMP + PAGE_NUM
+      var urlStr = BASE_PATH + "/discover/movie?api_key=" + api_key + AMP + PAGE_NUM
+      if (gon.current_user.lang != null) {
+        urlStr += AMP + 'language=' + gon.current_user.lang
+        urlStr += AMP + 'sort_by=';
+        switch (gon.current_user.sort) {
+          case 'pop_desc':
+            urlStr += 'popularity.desc';
+            break;
+          case 'pop_asc':
+            urlStr += 'popularity.asc';
+            break;
+          case 'date_desc':
+            urlStr += 'primary_release_date.desc';
+            break;
+          case 'date_asc':
+            urlStr += 'primary_release_date.asc';
+            break;
+          case 'rev_desc':
+            urlStr += 'revenue.desc';
+            break;
+          case 'rev_asc':
+            urlStr += 'revenue.asc';
+            break;
+        }
+        urlStr += AMP + 'primary_release_date.gte=' + gon.current_user.eyear
+        urlStr += AMP + 'include_adult=' + gon.current_user.adult
+        urlStr += AMP + 'with_runtime.lte=' + gon.current_user.max_len
+      }
       for (let [key, value] of attributes) {
       	
         if (key == 'with_genres') {

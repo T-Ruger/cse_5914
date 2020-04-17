@@ -123,6 +123,7 @@
           <td><%= movie.title %></td>
           <td><%= movie.short_desc %></td>
           <td><%=button_to "Remove", movie_path(movie), :class => 'btn btn-primary', :method => :delete, :data => {confirm: 'Are you sure?'}, :movie_type => "seen"%></td>
+          
         </tr>
       <% end %>
     </tbody>

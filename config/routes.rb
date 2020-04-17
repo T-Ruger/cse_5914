@@ -27,4 +27,6 @@ Rails.application.routes.draw do
   get '/create_watch', to: "movies#create_watch"
   get '/viewingscreate', to: "viewings#create"
   get '/updateRatings', to: "static_page#updateRatings"
+  get '/submit_pref', to: "preferences#submit"
+  get '/clear_pref', to: "preferences#clear"
 end

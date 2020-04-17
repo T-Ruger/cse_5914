@@ -5,7 +5,7 @@
 <div class = "pref">
 	<div class = "column">
 		<p> Preferred Language:
-			<select class="mdb-select md-form">
+			<select class="mdb-select md-form" id="language">
 			  <option value="en">English</option>
 			  <option value="sp">Spanish</option>
 			  <option value="fr">French</option>
@@ -16,7 +16,7 @@
 
 	<div class = "column">
 		<p> Include Adult Content:
-			<select class="mdb-select md-form">
+			<select class="mdb-select md-form" id="adult">
 			  <option value="adult_no">No</option>
 			  <option value="adult_yes">Yes</option>
 			</select>
@@ -25,7 +25,7 @@
 
 	<div class = "column">
 		<p> Sort Results By:
-			<select class="mdb-select md-form">
+			<select class="mdb-select md-form" id="sort">
 			  <option value="pop_desc">Descending Popularity</option>
 			  <option value="pop_asc">Ascending Popularity</option>
 			  <option value="date_desc">Descending Release Date</option>
@@ -51,8 +51,13 @@
 </div>
 
 
-
-<button class = "button"> Submit </button>
+<div>
+	<%= link_to '<button class = "button" id = "submit">Submit</button>'.html_safe, '/home'%>
+</div>
+<br/>
+<div>
+	<%= link_to '<button class = "button2" id = "submit">Clear Preferences</button>'.html_safe, '/clear_pref'%>
+</div>
 
 <script>
 var year_slider = document.getElementById("year_slider");
@@ -71,6 +76,27 @@ year_slider.oninput = function() {
 length_slider.oninput = function() {
   length_output.innerHTML = this.value;
 } 
+function submit() {
+	var year_slider = document.getElementById("year_slider");
+	var length_slider = document.getElementById("length_slider");
+	var language = document.getElementById("language");
+	var adult = document.getElementById("adult");
+	var sort = document.getElementById("sort");
+	var lang_sel = language.options[language.selectedIndex].value;
+	var adult_sel = adult.options[adult.selectedIndex].value;
+	var sort_sel = sort.options[sort.selectedIndex].value;
+	$.ajax({
+	    url: "/submit_pref",
+	    type: "get",
+	    data: { 'early_year': year_slider.value,
+	            'max_len': length_slider.value,
+	            'lang_sel': lang_sel,
+	            'adult_sel': adult_sel,
+	        	'sort_sel': sort_sel}
+	  })
+}
+document.getElementById("submit").addEventListener("click", submit)
+
 </script>
 
 
@@ -115,5 +141,13 @@ length_slider.oninput = function() {
 	width: 100%;
 	color: white;
 	background-color: #4CAF50;
+}
+.button2 {
+	padding: 4px;
+	font-size: 20px;
+	border-radius : 10px;
+	width: 100%;
+	color: white;
+	background-color: #FF0000;
 }
 </style>
