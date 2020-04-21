@@ -19,7 +19,7 @@ class RoomMessagesController < ApplicationController
 
    RoomChannel.broadcast_to @room, @room_message
    
-   #check if user is currently reviewing a movie. If they are, send message to sentiment analysis and update rating
+   #check if user is currently reviewing a movie or taking quiz. If they are, send message to sentiment analysis and update rating
    if @room.lastIntent == "already_seen" then
    	puts "\n\n\n The message you just sent was a review: " + @room_message.message.to_s + "\n\n\n" #debugging
    	#send @room_message to sentiment analysis
@@ -29,7 +29,13 @@ class RoomMessagesController < ApplicationController
 	  #clear lastIntent
 	  @room.lastIntent = ""
 	  @room.save
+   #check if user is answering quiz question
+	 elsif @room.lastIntent == "start_quiz" then
+	  take_quiz
 	  
+	  #clear lastIntent
+	  @room.lastIntent = ""
+	  @room.save
 	 #otherwise, get response from watson 
    else
 	 	get_response
@@ -330,6 +336,89 @@ class RoomMessagesController < ApplicationController
     viewings = Viewing.where(user_id: current_user.id, movie_id: current_user.movie_id)
     viewings.first.rating = rating_data
     viewings.first.save
+  end
+  
+  #take personality quiz
+  def take_quiz 
+  	quiz_answer = @room_message.message
+  	#send quiz answer to language analysis
+		authenticator = Authenticators::IamAuthenticator.new(
+			apikey: "ZnDzX8FfmZu92lPaf_ut1kmzir3S66geHAgYheIQvSkH"
+		)
+		
+		natural_language_understanding = NaturalLanguageUnderstandingV1.new(
+			version: "2019-07-12",
+			authenticator: authenticator
+		)
+
+		natural_language_understanding.service_url = "https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/b63a4323-b4d7-412e-8c11-263319d1b818"
+
+		response = natural_language_understanding.analyze(
+			text: quiz_answer,
+			features: {
+				emotion: {
+				  emotion: true,
+				  sentiment: true,
+				}
+			}
+		)
+		
+		puts response
+		#calculate emotional response
+		emotions = response.result["emotion"]["document"]["emotion"]
+		puts JSON.pretty_generate(emotions)
+		
+		joy = emotions["joy"]
+		sadness = emotions["sadness"]
+		disgust = emotions["disgust"]
+		anger = emotions["anger"]
+		fear = emotions["fear"]
+		
+		scores = [joy, sadness, disgust, anger, fear]
+		max = scores.max()
+		genres = []
+		
+		#select genre
+		if anger == max then
+			genres = ["action", "crime", "war", "western", "adventure"]
+		elsif disgust == max then
+			genres = ["horror", "science fiction", "thriller", "biography"]
+		elsif sadness == max then
+			genres = ["mystery", "drama", "documentary", "romance", "history"]
+		elsif fear == max
+			genres = ["horror", "drama", "thriller", "family"]
+		else
+			genres = ["adventure",  "comedy", "animation", "fantasy", "music"]
+		end 
+		
+		genre = genres.sample
+		runtime = quiz_answer.length + 60
+		if (runtime < 90) then
+			runtime = 90
+		end
+		#set parameters
+		params_json = JSON.parse(@room.params)
+		params_json["with_genres"] = genre
+		params_json["with_runtime.lte"] = runtime
+		#replace "=>" with ":" because javascript is dumb
+		@room.params = params_json.to_s.gsub("=>", ":")
+		@room.save
+		
+  	#send response message
+  	@watson_message = RoomMessage.create user:current_user,
+   																			 room: @room,
+   																			 watsonmsg: true,
+   																			 message: "Genre: " + genre + ". Response length = " + quiz_answer.length.to_s + ". Joy = " + joy.to_s + ", sadness = " + sadness.to_s + ", disgust = " + disgust.to_s + ", anger = " + anger.to_s + ", fear = " + fear.to_s + ".",
+   																			 params: @room.params
+		RoomChannel.broadcast_to @room, @watson_message
+		
+  	#send response message
+  	@watson_message = RoomMessage.create user:current_user,
+   																			 room: @room,
+   																			 watsonmsg: true,
+   																			 message: "Searching for " + genre + " movies less than " +runtime.to_s + " minutes long.",
+   																			 params: @room.params
+		RoomChannel.broadcast_to @room, @watson_message
   end
   
   #get new session id for room if session is expired
