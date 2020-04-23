@@ -201,7 +201,7 @@
             urlStr += 'revenue.asc';
             break;
         }
-        urlStr += AMP + 'primary_release_date.gte=' + gon.current_user.eyear
+        urlStr += AMP + 'primary_release_date.gte=' + gon.current_user.eyear +'-01-01'
         urlStr += AMP + 'include_adult=' + gon.current_user.adult
         urlStr += AMP + 'with_runtime.lte=' + gon.current_user.max_len
       }
