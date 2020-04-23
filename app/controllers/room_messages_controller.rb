@@ -377,18 +377,24 @@ class RoomMessagesController < ApplicationController
 		scores = [joy, sadness, disgust, anger, fear]
 		max = scores.max()
 		genres = []
+		emotion_text = "Your response shows mostly "
 		
 		#select genre
 		if anger == max then
 			genres = ["action", "crime", "war", "western", "adventure"]
+			emotion_text += "anger."
 		elsif disgust == max then
 			genres = ["horror", "science fiction", "thriller", "biography"]
+			emotion_text += "disgust."
 		elsif sadness == max then
 			genres = ["mystery", "drama", "documentary", "romance", "history"]
+			emotion_text += "sadness."
 		elsif fear == max
 			genres = ["horror", "drama", "thriller", "family"]
+			emotion_text += "fear."
 		else
 			genres = ["adventure",  "comedy", "animation", "fantasy", "music"]
+			emotion_text += "joy."
 		end 
 		
 		genre = genres.sample
@@ -404,6 +410,7 @@ class RoomMessagesController < ApplicationController
 		@room.params = params_json.to_s.gsub("=>", ":")
 		@room.save
 		
+=begin
   	#send response message
   	@watson_message = RoomMessage.create user:current_user,
    																			 room: @room,
@@ -411,12 +418,13 @@ class RoomMessagesController < ApplicationController
    																			 message: "Genre: " + genre + ". Response length = " + quiz_answer.length.to_s + ". Joy = " + joy.to_s + ", sadness = " + sadness.to_s + ", disgust = " + disgust.to_s + ", anger = " + anger.to_s + ", fear = " + fear.to_s + ".",
    																			 params: @room.params
 		RoomChannel.broadcast_to @room, @watson_message
-		
+=end
+
   	#send response message
   	@watson_message = RoomMessage.create user:current_user,
    																			 room: @room,
    																			 watsonmsg: true,
-   																			 message: "Searching for " + genre + " movies less than " +runtime.to_s + " minutes long.",
+   																			 message: emotion_text + " Searching for " + genre + " movies less than " +runtime.to_s + " minutes long.",
    																			 params: @room.params
 		RoomChannel.broadcast_to @room, @watson_message
   end
